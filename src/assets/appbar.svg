@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" width="1440" height="60" preserveAspectRatio="none" viewBox="0 0 1440 60">
+    <g mask="url(&quot;#SvgjsMask1547&quot;)" fill="none">
+        <rect width="1440" height="60" x="0" y="0" fill="url(#SvgjsLinearGradient1548)"></rect>
+        <use xlink:href="#SvgjsSymbol1554" x="0" y="0"></use>
+        <use xlink:href="#SvgjsSymbol1554" x="720" y="0"></use>
+    </g>
+    <defs>
+        <mask id="SvgjsMask1547">
+            <rect width="1440" height="60" fill="#ffffff"></rect>
+        </mask>
+        <linearGradient x1="76.04%" y1="-575%" x2="23.96%" y2="675%" gradientUnits="userSpaceOnUse" id="SvgjsLinearGradient1548">
+            <stop stop-color="rgba(0, 65, 158, 1)" offset="0"></stop>
+            <stop stop-color="rgba(82, 57, 112, 1)" offset="1"></stop>
+        </linearGradient>
+        <path d="M-1 0 a1 1 0 1 0 2 0 a1 1 0 1 0 -2 0z" id="SvgjsPath1552"></path>
+        <path d="M-3 0 a3 3 0 1 0 6 0 a3 3 0 1 0 -6 0z" id="SvgjsPath1550"></path>
+        <path d="M-5 0 a5 5 0 1 0 10 0 a5 5 0 1 0 -10 0z" id="SvgjsPath1553"></path>
+        <path d="M2 -2 L-2 2z" id="SvgjsPath1551"></path>
+        <path d="M6 -6 L-6 6z" id="SvgjsPath1549"></path>
+        <path d="M30 -30 L-30 30z"></path>
+    </defs>
+    <symbol id="SvgjsSymbol1554">
+        <use xlink:href="#SvgjsPath1549" x="30" y="30" stroke="rgba(255, 255, 255, 0.22)"></use>
+        <use xlink:href="#SvgjsPath1550" x="90" y="30" stroke="rgba(255, 255, 255, 0.22)"></use>
+        <use xlink:href="#SvgjsPath1549" x="150" y="30" stroke="rgba(255, 255, 255, 0.22)"></use>
+        <use xlink:href="#SvgjsPath1551" x="210" y="30" stroke="rgba(255, 255, 255, 0.22)"></use>
+        <use xlink:href="#SvgjsPath1552" x="270" y="30" stroke="rgba(255, 255, 255, 0.22)"></use>
+        <use xlink:href="#SvgjsPath1549" x="330" y="30" stroke="rgba(255, 255, 255, 0.22)"></use>
+        <use xlink:href="#SvgjsPath1553" x="390" y="30" stroke="rgba(255, 255, 255, 0.22)"></use>
+        <use xlink:href="#SvgjsPath1549" x="450" y="30" stroke="rgba(255, 255, 255, 0.22)"></use>
+        <use xlink:href="#SvgjsPath1549" x="510" y="30" stroke="rgba(255, 255, 255, 0.22)"></use>
+        <use xlink:href="#SvgjsPath1553" x="570" y="30" stroke="rgba(255, 255, 255, 0.22)"></use>
+        <use xlink:href="#SvgjsPath1553" x="630" y="30" stroke="rgba(255, 255, 255, 0.22)"></use>
+        <use xlink:href="#SvgjsPath1551" x="690" y="30" stroke="rgba(255, 255, 255, 0.22)"></use>
+    </symbol>
+</svg>
