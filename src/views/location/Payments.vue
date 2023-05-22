@@ -2,34 +2,18 @@
   <div v-if="location != null" id="payments">
     <v-row>
       <v-col cols="auto">
-        <v-btn
-          @click="addNewPaymentDialog = true"
-          color="success"
-          v-if="!auth.includes('add')"
-          variant="elevated"
-          elevation="0"
-          >اضافة سلفة جديدة</v-btn
-        >
+        <v-btn @click="addNewPaymentDialog = true" color="success" v-if="!auth.includes('add')" variant="elevated"
+          elevation="0">اضافة سلفة جديدة</v-btn>
       </v-col>
       <v-col cols="12" md="3">
-        <v-autocomplete
-          density="compact"
-          variant="outlined"
-          label="فرز حسب المستلم"
-          :items="recievers"
-          item-value="receiver"
-          item-title="receiver"
-          clearable
-          v-model="reveiverSearch"
-          @update:menu="fixMenu"
-        ></v-autocomplete>
+        <v-autocomplete density="compact" variant="outlined" label="فرز حسب المستلم" :items="recievers"
+          item-value="receiver" item-title="receiver" clearable v-model="reveiverSearch"
+          @update:menu="fixMenu"></v-autocomplete>
+
       </v-col>
     </v-row>
     <div v-for="payment in payments" :key="payment.idPayment">
-      <v-card
-        :id="'payment_' + payment.idPayment"
-        class="elevation-5 rounded-lg ma-4"
-      >
+      <v-card :id="'payment_' + payment.idPayment" class="elevation-5 rounded-lg ma-4">
         <div class="pagePrint showOnPrint">
           <img src="printHeader.png" style="width: 100%" />
           <br />
@@ -79,11 +63,7 @@
         <v-table class="px-0 rounded-0" theme="light" hover>
           <thead class="bg-grey-lighten-2">
             <tr>
-              <th
-                style="padding: 0px"
-                colspan="6"
-                class="header-space printOnlyTd"
-              >
+              <th style="padding: 0px" colspan="6" class="header-space printOnlyTd">
                 <img src="printHeader.png" style="width: 100%" />
               </th>
             </tr>
@@ -102,219 +82,182 @@
                       <th class="hideOnPrint">الاجراءات</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    <tr>
-                      <td>
-                        <b class="text-info">{{ payment.paymentCount }}</b>
-                      </td>
-                      <td>
-                        <v-chip color="success">
-                          <b>
-                            {{ payment.paymentAmount.toLocaleString() }}
-                            <span v-if="currency == 'dinar'">د.ع</span>
-                            <span v-if="currency == 'dollar'">$</span>
-                          </b>
-                        </v-chip>
-                      </td>
-                      <td>{{ parseDate(payment.createdAt) }}</td>
-                      <td>{{ location.percentage }} %</td>
-                      <td class="text-warning font-weight-bold">
-                        {{
-                          calculatePercentage(
-                            payment.paymentAmount,
-                            payment
-                          ).toLocaleString()
-                        }}
-                        <span v-if="currency == 'dinar'">د.ع</span>
-                        <span v-if="currency == 'dollar'">$</span>
-                      </td>
-                      <td class="text-success font-weight-bold">
-                        {{
-                          (
-                            payment.paymentAmount -
-                            calculatePercentage(payment.paymentAmount, payment)
-                          ).toLocaleString()
-                        }}
-                        <span v-if="currency == 'dinar'">د.ع</span>
-                        <span v-if="currency == 'dollar'">$</span>
-                      </td>
-                      <td class="wrapOnPrint">{{ payment.notice }}</td>
-                      <td class="hideOnPrint">
-                        <template v-if="!auth.includes('add')">
-                          <v-btn
-                            @click="
-                              newPaymentCutForm.paymentId = payment.idPayment;
-                              addNewPaymentCutDialog = true;
-                            "
-                            v-if="
-                              payment.paymentAmount +
-                                payment.totalAdds -
-                                calculatePercentage(payment.paymentAmount) -
-                                payment.addsPercentage -
-                                payment.totalCut >
-                              0
-                            "
-                            color="warning"
-                            variant="outlined"
-                          >
-                            <v-icon
-                              start
-                              icon="mdi-plus-circle-outline"
-                            ></v-icon>
-                            <span>اضافة حركة</span>
-                          </v-btn>
-                        </template>
-                        <v-chip
-                          color="info"
-                          v-if="
-                            payment.paymentAmount +
-                              payment.totalAdds -
-                              calculatePercentage(payment.paymentAmount) -
-                              payment.addsPercentage -
-                              payment.totalCut ==
-                            0
-                          "
-                        >
-                          <v-icon icon="mdi-check" start></v-icon>
-                          <span>تم صرف السلفة</span>
-                        </v-chip>
-                        &nbsp;
-                        <v-btn
-                          v-print="'#' + 'payment_' + payment.idPayment"
-                          variant="outlined"
-                          color="info"
-                        >
-                          <v-icon start icon="mdi-printer"></v-icon>
-                          <span>طباعة</span>
-                        </v-btn>
-                        &nbsp;
-                        <v-btn
-                          variant="outlined"
-                          color="red"
-                          @click="deletePayment(payment.idPayment)"
-                          v-if="!auth.includes('delete')"
-                        >
-                          <v-icon start icon="mdi-delete-outline"></v-icon>
-                          <span>حذف السلفة</span>
-                        </v-btn>
-                      </td>
-                    </tr>
-                  </tbody>
-                </v-table>
-                <!-- <br class="showOnPrint" /> -->
-              </th>
-            </tr>
-            <tr v-if="payment.cuts.length > 0">
-              <th width="120px">الحركة</th>
-              <th width="120px">المبلغ</th>
-              <th>تاريخ</th>
-              <th>اسم المستلم</th>
-              <th width="50%">الملاحظات</th>
-              <th class="hideOnPrint">الاجراءات</th>
-            </tr>
-          </thead>
-          <tbody v-if="payment.cuts.length > 0">
-            <tr
-              v-for="cut in reveiverSearch == null
-                ? payment.cuts
-                : payment.cuts.filter((e) => e.receiver == reveiverSearch)"
-              :key="cut.idPaymentCut"
-            >
+          <tbody>
+            <tr>
               <td>
-                <b v-if="cut.method == 'minus'" class="text-red">صرف</b>
-                <b v-if="cut.method == 'plus'" class="text-success">اضافة</b>
+                <b class="text-info">{{ payment.paymentCount }}</b>
               </td>
               <td>
-                <v-chip :color="cut.method == 'minus' ? 'error' : 'success'">
+                <v-chip color="success">
                   <b>
-                    {{
-                      cut.price > 0
-                        ? cut.price.toLocaleString()
-                        : (cut.price * -1).toLocaleString()
-                    }}
+                    {{ payment.paymentAmount.toLocaleString() }}
                     <span v-if="currency == 'dinar'">د.ع</span>
                     <span v-if="currency == 'dollar'">$</span>
                   </b>
                 </v-chip>
               </td>
-              <td>
-                {{ parseDate(cut.createdAt) }}
+              <td>{{ parseDate(payment.createdAt) }}</td>
+              <td>{{ location.percentage }} %</td>
+              <td class="text-warning font-weight-bold">
+                {{
+                  calculatePercentage(
+                    payment.paymentAmount,
+                    payment
+                  ).toLocaleString()
+                }}
+                <span v-if="currency == 'dinar'">د.ع</span>
+                <span v-if="currency == 'dollar'">$</span>
               </td>
-              <td v-if="cut.method == 'minus'">{{ cut.receiver }}</td>
-              <td v-if="cut.method == 'plus'">
-                <v-chip color="success"
-                  >اضافة نسبة الشركة
-                  {{ calculatePercentage(cut.price, payment).toLocaleString() }}
-                  &nbsp;
-                  <span v-if="currency == 'dinar'">د.ع</span>
-                  <span v-if="currency == 'dollar'">$</span>
-                </v-chip>
+              <td class="text-success font-weight-bold">
+                {{
+                  (
+                    payment.paymentAmount -
+                    calculatePercentage(payment.paymentAmount, payment)
+                  ).toLocaleString()
+                }}
+                <span v-if="currency == 'dinar'">د.ع</span>
+                <span v-if="currency == 'dollar'">$</span>
               </td>
-              <td class="wrapOnPrint wrap">{{ cut.notice }}</td>
+              <td class="wrapOnPrint">{{ payment.notice }}</td>
               <td class="hideOnPrint">
-                <v-btn
-                  v-if="!auth.includes('delete')"
-                  variant="plain"
-                  color="error"
-                  @click="deletePaymentCut(cut.idPaymentCut)"
-                  icon
-                >
-                  <v-icon>mdi-delete-outline</v-icon>
+                <template v-if="!auth.includes('add')">
+                  <v-btn
+                    @click="
+                      newPaymentCutForm.paymentId = payment.idPayment;
+                    addNewPaymentCutDialog = true;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        "
+                    v-if="
+                      payment.paymentAmount +
+                      payment.totalAdds -
+                      calculatePercentage(payment.paymentAmount) -
+                      payment.addsPercentage -
+                      payment.totalCut >
+                      0
+                    " color="warning" variant="outlined">
+                    <v-icon start icon="mdi-plus-circle-outline"></v-icon>
+                    <span>اضافة حركة</span>
+                  </v-btn>
+                </template>
+                <v-chip color="info" v-if="
+                  payment.paymentAmount +
+                  payment.totalAdds -
+                  calculatePercentage(payment.paymentAmount) -
+                  payment.addsPercentage -
+                  payment.totalCut ==
+                  0
+                ">
+                  <v-icon icon="mdi-check" start></v-icon>
+                  <span>تم صرف السلفة</span>
+                </v-chip>
+                &nbsp;
+                <v-btn v-print="'#' + 'payment_' + payment.idPayment" variant="outlined" color="info">
+                  <v-icon start icon="mdi-printer"></v-icon>
+                  <span>طباعة</span>
                 </v-btn>
-                <v-btn
-                  @click="
-                    selectedPaymentCutId = cut.idPaymentCut;
-                    selectedPaymentId = payment.idPayment;
-                    chooseImage();
-                  "
-                  v-if="!auth.includes('add')"
-                  variant="text"
-                  color="success"
-                  >اضافة صورة وصل</v-btn
-                >
-                <input
-                  type="file"
-                  name="file"
-                  id="file"
-                  style="display: none"
-                  @change="uploadImage($event)"
-                  accept="image/*"
-                />
-                <img
-                  v-for="image in paymentCutImages.filter(
-                    (e) => e.paymentCutId == cut.idPaymentCut
-                  )"
-                  :key="image.idPaymentCutImage"
-                  :src="axios.defaults.baseURL + image.imagePath"
-                  class="paymentCutImage"
-                  @click="
-                    selectedPaymentCutImageId = image.idPaymentCutImage;
-                    zoomedImage = axios.defaults.baseURL + image.imagePath;
-                    imageModal = true;
-                  "
-                  alt=""
-                />
+                &nbsp;
+                <v-btn variant="outlined" color="red" @click="deletePayment(payment.idPayment)"
+                  v-if="!auth.includes('delete')">
+                  <v-icon start icon="mdi-delete-outline"></v-icon>
+                  <span>حذف السلفة</span>
+                </v-btn>
               </td>
             </tr>
           </tbody>
-          <tfoot>
-            <tr>
-              <td colspan="6" class="footer-space">
-                <v-divider class="mb-4"></v-divider>
-                <div class="px-4 pb-5 showOnlyOnLastPage">
-                  <v-chip color="error">
-                    <span
-                      >مجموع الصرفيات :
-                      <b>
-                        {{ payment.totalCut.toLocaleString() }}
-                        <span v-if="currency == 'dinar'">د.ع</span>
-                        <span v-if="currency == 'dollar'">$</span>
-                      </b>
-                    </span>
-                  </v-chip>
-                  &nbsp;
+        </v-table>
+        <!-- <br class="showOnPrint" /> -->
+        </th>
+        </tr>
+        <tr v-if="payment.cuts.length > 0">
+          <th width="120px">الحركة</th>
+          <th width="120px">المبلغ</th>
+          <th>تاريخ</th>
+          <th>اسم المستلم</th>
+          <th width="50%">الملاحظات</th>
+          <th class="hideOnPrint">الاجراءات</th>
+        </tr>
+        </thead>
+        <tbody v-if="payment.cuts.length > 0">
+          <tr v-for="cut in reveiverSearch == null
+            ? payment.cuts
+            : payment.cuts.filter((e) => e.receiver == reveiverSearch)" :key="cut.idPaymentCut">
+            <td>
+              <b v-if="cut.method == 'minus'" class="text-red">صرف</b>
+              <b v-if="cut.method == 'plus'" class="text-success">اضافة</b>
+            </td>
+            <td>
+              <v-chip :color="cut.method == 'minus' ? 'error' : 'success'">
+                <b>
+                  {{
+                    cut.price > 0
+                    ? cut.price.toLocaleString()
+                    : (cut.price * -1).toLocaleString()
+                  }}
+                  <span v-if="currency == 'dinar'">د.ع</span>
+                  <span v-if="currency == 'dollar'">$</span>
+                </b>
+              </v-chip>
+            </td>
+            <td>
+              {{ parseDate(cut.createdAt) }}
+            </td>
+            <td v-if="cut.method == 'minus'">{{ cut.receiver }}</td>
+            <td v-if="cut.method == 'plus'">
+              <v-chip color="success">اضافة نسبة الشركة
+                {{ calculatePercentage(cut.price, payment).toLocaleString() }}
+                &nbsp;
+                <span v-if="currency == 'dinar'">د.ع</span>
+                <span v-if="currency == 'dollar'">$</span>
+              </v-chip>
+            </td>
+            <td class="wrapOnPrint wrap">{{ cut.notice }}</td>
+            <td class="hideOnPrint">
+              <v-btn v-if="!auth.includes('edit')" variant="plain" color="info"
+                @click="editPaymentCutForm = cut; editPaymentCutDialog = true;" icon>
+                <v-icon>mdi-pencil</v-icon>
+              </v-btn>
+              <v-btn v-if="!auth.includes('delete')" variant="plain" color="error"
+                @click="deletePaymentCut(cut.idPaymentCut)" icon>
+                <v-icon>mdi-delete-outline</v-icon>
+              </v-btn>
+              <v-btn
+                @click="
+                  selectedPaymentCutId = cut.idPaymentCut;
+                selectedPaymentId = payment.idPayment;
+                chooseImage();
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                      "
+                v-if="!auth.includes('add')" variant="text" color="success">اضافة
+                صورة وصل</v-btn>
+              <input type="file" name="file" id="file" style="display: none" @change="uploadImage($event)"
+                accept="image/*" />
+              <img v-for="image in paymentCutImages.filter(
+                (e) => e.paymentCutId == cut.idPaymentCut
+              )" :key="image.idPaymentCutImage" :src="axios.defaults.baseURL + image.imagePath" class="paymentCutImage"
+                @click="
+                  selectedPaymentCutImageId = image.idPaymentCutImage;
+                zoomedImage = axios.defaults.baseURL + image.imagePath;
+                imageModal = true;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    "
+                alt="" />
+            </td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="6" class="footer-space">
+              <v-divider class="mb-4"></v-divider>
+              <div class="px-4 pb-5 showOnlyOnLastPage">
+                <v-chip color="error">
+                  <span>مجموع الصرفيات :
+                    <b>
+                      {{ payment.totalCut.toLocaleString() }}
+                      <span v-if="currency == 'dinar'">د.ع</span>
+                      <span v-if="currency == 'dollar'">$</span>
+                    </b>
+                  </span>
+                </v-chip>
+                &nbsp;
 
-                  <!-- <v-chip color="success">
+                <!-- <v-chip color="success">
                     <span
                       >مجموع نسبة الشركة :
                       <b>
@@ -330,69 +273,44 @@
                     </span>
                   </v-chip>
                   &nbsp; -->
-                  <v-chip color="warning">
-                    <span
-                      >المبلغ المتبقي من السلفة :
-                      <b>
-                        {{
-                          (
-                            payment.paymentAmount +
-                            payment.totalAdds -
-                            calculatePercentage(payment.paymentAmount) -
-                            payment.addsPercentage -
-                            payment.totalCut
-                          ).toLocaleString()
-                        }}
-                        <span v-if="currency == 'dinar'">د.ع</span>
-                        <span v-if="currency == 'dollar'">$</span>
-                      </b>
-                    </span>
-                  </v-chip>
-                </div>
-              </td>
-              <td class="hideOnPrint"></td>
-            </tr>
-            <tr>
-              <td
-                style="padding: 0px"
-                colspan="6"
-                class="header-space printOnlyTd"
-              >
-                <img
-                  src="printFooter.png"
-                  style="width: 100%; visibility: hidden"
-                />
-                <img
-                  src="printFooter.png"
-                  style="width: 100%; position: fixed; bottom: 0; left: 0"
-                />
-              </td>
-            </tr>
-          </tfoot>
+                <v-chip color="warning">
+                  <span>المبلغ المتبقي من السلفة :
+                    <b>
+                      {{
+                        (
+                          payment.paymentAmount +
+                          payment.totalAdds -
+                          calculatePercentage(payment.paymentAmount) -
+                          payment.addsPercentage -
+                          payment.totalCut
+                        ).toLocaleString()
+                      }}
+                      <span v-if="currency == 'dinar'">د.ع</span>
+                      <span v-if="currency == 'dollar'">$</span>
+                    </b>
+                  </span>
+                </v-chip>
+              </div>
+            </td>
+            <td class="hideOnPrint"></td>
+          </tr>
+          <tr>
+            <td style="padding: 0px" colspan="6" class="header-space printOnlyTd">
+              <img src="printFooter.png" style="width: 100%; visibility: hidden" />
+              <img src="printFooter.png" style="width: 100%; position: fixed; bottom: 0; left: 0" />
+            </td>
+          </tr>
+        </tfoot>
         </v-table>
-        <div
-          v-for="image in paymentCutImages.filter(
-            (e) => e.paymentId == payment.idPayment
-          )"
-          :key="image.idPaymentCutImage"
-          class="pagePrint showOnPrint"
-          style="padding: 30px"
-        >
-          <img
-            :src="axios.defaults.baseURL + image.imagePath"
-            style="height: 20cm; width: 19cm"
-            alt=""
-          />
+        <div v-for="image in paymentCutImages.filter(
+          (e) => e.paymentId == payment.idPayment
+        )" :key="image.idPaymentCutImage" class="pagePrint showOnPrint" style="padding: 30px">
+          <img :src="axios.defaults.baseURL + image.imagePath" style="height: 20cm; width: 19cm" alt="" />
         </div>
       </v-card>
       <v-divider class="my-10"></v-divider>
     </div>
-    <v-footer
-      color="#01226F"
-      class="pa-3"
-      elevation="5"
-      :app="!$vuetify.display.mobile"
-    >
+    <v-footer color="#01226F" class="pa-3" elevation="5" :app="!$vuetify.display.mobile">
       <v-row>
         <v-col cols="auto">
           <v-chip color="white">
@@ -440,54 +358,45 @@
             <span v-if="currency == 'dollar'">$</span>
           </v-chip>
         </v-col>
+        <v-col v-if="reveiverSearch != null" cols="auto">
+          <v-chip color="red">
+            <span> مجموع صرفيات المستلم</span>
+            &nbsp;
+            <b>
+              {{ totalCutsByReciever(reveiverSearch).toLocaleString() }}
+            </b>
+            &nbsp;
+            <span v-if="currency == 'dinar'">د.ع</span>
+            <span v-if="currency == 'dollar'">$</span>
+          </v-chip>
+        </v-col>
       </v-row>
     </v-footer>
 
-    <v-dialog
-      v-model="addNewPaymentDialog"
-      max-width="500px"
-      transition="dialog-transition"
-    >
+    <v-dialog v-model="addNewPaymentDialog" max-width="500px" transition="dialog-transition">
       <v-card class="pa-5">
         <v-card-title>اضافة سلفة جديدة</v-card-title>
         <v-divider class="my-2"></v-divider>
-        <v-text-field
-          variant="outlined"
-          v-model="newPaymentForm.paymentAmount"
-          type="number"
-          label="مبلغ السلفة"
-        ></v-text-field>
+        <v-text-field variant="outlined" v-model="newPaymentForm.paymentAmount" type="number"
+          label="مبلغ السلفة"></v-text-field>
         <small class="mb-1">
           <div>تاريخ السلفة</div>
         </small>
-        <VueDatePicker
-          model-type="format"
-          format="yyyy-MM-dd"
-          auto-apply
-          close-on-auto-apply
-          no-swipe
-          :clearable="false"
-          v-model="newPaymentForm.createdAt"
-        />
+        <VueDatePicker model-type="format" format="yyyy-MM-dd" auto-apply close-on-auto-apply no-swipe :clearable="false"
+          v-model="newPaymentForm.createdAt" />
         <br />
-        <v-textarea
-          variant="outlined"
-          v-model="newPaymentForm.notice"
-          label="الملاحظات"
-        ></v-textarea>
+        <v-textarea variant="outlined" v-model="newPaymentForm.notice" label="الملاحظات"></v-textarea>
         <template v-if="payments.length > 0">
-          <template
-            v-if="
-              payments[payments.length - 1].paymentAmount +
-                payments[payments.length - 1].totalAdds -
-                calculatePercentage(
-                  payments[payments.length - 1].paymentAmount
-                ) +
-                payments[payments.length - 1].addsPercentage -
-                payments[payments.length - 1].totalCut >
-              0
-            "
-          >
+          <template v-if="
+            payments[payments.length - 1].paymentAmount +
+            payments[payments.length - 1].totalAdds -
+            calculatePercentage(
+              payments[payments.length - 1].paymentAmount
+            ) +
+            payments[payments.length - 1].addsPercentage -
+            payments[payments.length - 1].totalCut >
+            0
+          ">
             <!-- <v-checkbox
               color="info"
               v-model="newPaymentMoveLastPayment"
@@ -531,53 +440,34 @@
           </template>
         </template>
         <v-divider class="my-2"></v-divider>
-        <v-btn @click="addPayment()" size="large" block color="primary" dark
-          >اضافة السلفة</v-btn
-        >
+        <v-btn @click="addPayment()" size="large" block color="primary" dark>اضافة السلفة</v-btn>
       </v-card>
     </v-dialog>
-    <v-dialog
-      v-model="addNewPaymentCutDialog"
-      max-width="500px"
-      transition="dialog-transition"
-    >
+    <v-dialog v-model="editPaymentCutDialog" max-width="500px" transition="dialog-transition">
+      <v-card class="pa-5">
+        <v-card-title>تعديل</v-card-title>
+        <v-text-field variant="outlined" v-model="editPaymentCutForm.createdAt"
+          :value="parseDate(editPaymentCutForm.createdAt)" type="date"></v-text-field>
+        <v-textarea variant="outlined" v-model="editPaymentCutForm.notice" label="الملاحظات"></v-textarea>
+        <br>
+        <v-btn @click="saveCut()" block color="primary" dark>حفظ</v-btn>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="addNewPaymentCutDialog" max-width="500px" transition="dialog-transition">
       <v-card class="pa-5">
         <v-card-title>اضافة حركة</v-card-title>
         <v-divider class="my-2"></v-divider>
-        <v-select
-          label="نوع الحركة"
-          :items="paymentCutMethods"
-          item-title="title"
-          item-value="value"
-          disabled
-          variant="outlined"
-          transition="fade"
-          @update:menu="fixMenu"
-          v-model="newPaymentCutForm.method"
-        ></v-select>
-        <v-text-field
-          variant="outlined"
-          v-model="newPaymentCutForm.price"
-          type="number"
-          :label="
-            newPaymentCutForm.method == 'minus' ? 'مبلغ الصرف' : 'مبلغ الاضافة'
-          "
-        ></v-text-field>
-        <v-text-field
-          variant="outlined"
-          v-if="newPaymentCutForm.method == 'minus'"
-          v-model="newPaymentCutForm.receiver"
-          label="اسم المستلم"
-        ></v-text-field>
-        <v-textarea
-          variant="outlined"
-          v-model="newPaymentCutForm.notice"
-          label="الملاحظات"
-        ></v-textarea>
+        <v-select label="نوع الحركة" :items="paymentCutMethods" item-title="title" item-value="value" disabled
+          variant="outlined" transition="fade" @update:menu="fixMenu" v-model="newPaymentCutForm.method"></v-select>
+        <v-text-field variant="outlined" v-model="newPaymentCutForm.price" type="number" :label="
+          newPaymentCutForm.method == 'minus' ? 'مبلغ الصرف' : 'مبلغ الاضافة'
+        "></v-text-field>
+        <v-text-field variant="outlined" v-if="newPaymentCutForm.method == 'minus'" v-model="newPaymentCutForm.receiver"
+          label="اسم المستلم"></v-text-field>
+        <v-textarea variant="outlined" v-model="newPaymentCutForm.notice" label="الملاحظات"></v-textarea>
         <div v-if="newPaymentCutForm.method == 'minus'">
           <v-chip color="warning">
-            <span
-              >اقصى مبلغ يمكن صرفه :
+            <span>اقصى مبلغ يمكن صرفه :
               <b>
                 {{
                   (
@@ -608,8 +498,7 @@
           <br />
           <br />
           <v-chip color="info">
-            <span
-              >المبلغ المتبقي بعد الصرف :
+            <span>المبلغ المتبقي بعد الصرف :
               <b>
                 {{
                   (
@@ -639,89 +528,61 @@
             </span>
           </v-chip>
           <v-divider class="my-2"></v-divider>
-          <v-btn
-            v-if="
+          <v-btn v-if="
+            payments.filter(
+              (e) => e.idPayment == newPaymentCutForm.paymentId
+            )[0].paymentAmount +
+            payments
+              .filter((e) => e.idPayment == newPaymentCutForm.paymentId)[0]
+              .cuts.filter((e) => e.method == 'plus')
+              .reduce((a, b) => a + b.price, 0) -
+            calculatePercentage(
               payments.filter(
                 (e) => e.idPayment == newPaymentCutForm.paymentId
-              )[0].paymentAmount +
-                payments
-                  .filter((e) => e.idPayment == newPaymentCutForm.paymentId)[0]
-                  .cuts.filter((e) => e.method == 'plus')
-                  .reduce((a, b) => a + b.price, 0) -
-                calculatePercentage(
-                  payments.filter(
-                    (e) => e.idPayment == newPaymentCutForm.paymentId
-                  )[0].paymentAmount,
-                  payments.filter(
-                    (e) => e.idPayment == newPaymentCutForm.paymentId
-                  )[0]
-                ) -
-                payments.filter(
-                  (e) => e.idPayment == newPaymentCutForm.paymentId
-                )[0].totalCut -
-                newPaymentCutForm.price >=
-              0
-            "
-            @click="addPaymentCut()"
-            size="large"
-            block
-            color="primary"
-            dark
-            >صرف</v-btn
-          >
-          <v-chip
-            v-if="
+              )[0].paymentAmount,
               payments.filter(
                 (e) => e.idPayment == newPaymentCutForm.paymentId
-              )[0].paymentAmount +
-                payments
-                  .filter((e) => e.idPayment == newPaymentCutForm.paymentId)[0]
-                  .cuts.filter((e) => e.method == 'plus')
-                  .reduce((a, b) => a + b.price, 0) -
-                calculatePercentage(
-                  payments.filter(
-                    (e) => e.idPayment == newPaymentCutForm.paymentId
-                  )[0].paymentAmount,
-                  payments.filter(
-                    (e) => e.idPayment == newPaymentCutForm.paymentId
-                  )[0]
-                ) -
-                payments.filter(
-                  (e) => e.idPayment == newPaymentCutForm.paymentId
-                )[0].totalCut -
-                newPaymentCutForm.price <
-              0
-            "
-            color="error"
-          >
+              )[0]
+            ) -
+            payments.filter(
+              (e) => e.idPayment == newPaymentCutForm.paymentId
+            )[0].totalCut -
+            newPaymentCutForm.price >=
+            0
+          " @click="addPaymentCut()" size="large" block color="primary" dark>صرف</v-btn>
+          <v-chip v-if="
+            payments.filter(
+              (e) => e.idPayment == newPaymentCutForm.paymentId
+            )[0].paymentAmount +
+            payments
+              .filter((e) => e.idPayment == newPaymentCutForm.paymentId)[0]
+              .cuts.filter((e) => e.method == 'plus')
+              .reduce((a, b) => a + b.price, 0) -
+            calculatePercentage(
+              payments.filter(
+                (e) => e.idPayment == newPaymentCutForm.paymentId
+              )[0].paymentAmount,
+              payments.filter(
+                (e) => e.idPayment == newPaymentCutForm.paymentId
+              )[0]
+            ) -
+            payments.filter(
+              (e) => e.idPayment == newPaymentCutForm.paymentId
+            )[0].totalCut -
+            newPaymentCutForm.price <
+            0
+          " color="error">
             المبلغ غير كافي
           </v-chip>
         </div>
         <div v-else>
-          <v-btn
-            @click="addPaymentCut()"
-            size="large"
-            block
-            color="primary"
-            dark
-            >اضافة</v-btn
-          >
+          <v-btn @click="addPaymentCut()" size="large" block color="primary" dark>اضافة</v-btn>
         </div>
       </v-card>
     </v-dialog>
     <v-dialog width="500" v-model="imageModal">
-      <img
-        @click="imageModal = false"
-        :src="zoomedImage"
-        style="height: 700px"
-        alt=""
-      />
-      <v-btn
-        v-if="!auth.includes('delete')"
-        @click="deletePaymentCutImage()"
-        color="error"
-        >حذف الصورة</v-btn
-      >
+      <img @click="imageModal = false" :src="zoomedImage" style="height: 700px" alt="" />
+      <v-btn v-if="!auth.includes('delete')" @click="deletePaymentCutImage()" color="error">حذف الصورة</v-btn>
     </v-dialog>
   </div>
 </template>
@@ -737,6 +598,8 @@ export default {
     addNewPaymentDialog: false,
     addNewPaymentCutDialog: false,
     newPaymentMoveLastPayment: false,
+    editPaymentCutForm: null,
+    editPaymentCutDialog: false,
     imageModal: false,
     zoomedImage: "",
     selectedPaymentCutImageId: 0,
@@ -926,6 +789,13 @@ export default {
       });
       return sum;
     },
+    totalCutsByReciever(name) {
+      let sum = 0;
+      this.payments.forEach((payment) => {
+        sum = sum + payment.cuts.filter(e => e.receiver == name).reduce((a, b) => a + b.price, 0)
+      });
+      return sum;
+    },
     totalPercentage() {
       let sum = 0;
       this.payments.forEach((payment) => {
@@ -968,6 +838,13 @@ export default {
           })
           .finally(() => (this.$store.state.loading = false));
       }
+    },
+    saveCut() {
+      this.$store.state.loading = true;
+      this.editPaymentCutForm.createdAt = this.parseDate(this.editPaymentCutForm.createdAt)
+      this.axios.put('paymentCut/' + this.editPaymentCutForm.idPaymentCut, this.editPaymentCutForm).then(() => {
+        this.$toast.success("تم تعديل المعلومات")
+      }).finally(() => this.$store.state.loading = false);
     },
     fixMenu(e) {
       if (e) {
@@ -1036,22 +913,26 @@ th {
   overflow: hidden;
 }
 
-.v-table--density-default > .v-table__wrapper > table > tbody > tr > th,
-.v-table--density-default > .v-table__wrapper > table > thead > tr > th,
-.v-table--density-default > .v-table__wrapper > table > tfoot > tr > th {
+.v-table--density-default>.v-table__wrapper>table>tbody>tr>th,
+.v-table--density-default>.v-table__wrapper>table>thead>tr>th,
+.v-table--density-default>.v-table__wrapper>table>tfoot>tr>th {
   height: 40px;
 }
+
 .showOnPrint {
   display: none;
 }
+
 .printOnlyTd {
   display: none;
 }
+
 .paymentCutImage {
   width: 50px;
   height: 50px;
   border-radius: 10px;
 }
+
 .wrap {
   white-space: normal;
   overflow: auto;
@@ -1061,9 +942,11 @@ th {
   .pagePrint {
     page-break-after: initial;
   }
+
   .pagePrint h1 {
     font-size: 30px !important;
   }
+
   .pagePrint h3 {
     font-size: 20px !important;
   }
@@ -1073,14 +956,17 @@ th {
     margin-top: 40px;
     padding: 30px;
   }
+
   .pagePrintTitles h3 {
     margin-bottom: 20px;
   }
+
   .header-space {
     vertical-align: bottom;
 
     border: none !important;
   }
+
   .headerTable {
     padding: 0px !important;
   }
@@ -1095,6 +981,7 @@ th {
     size: A4;
     margin: 0 0 0 0;
   }
+
   .v-card {
     margin: 0px !important;
     border-radius: 0px !important;
@@ -1102,19 +989,23 @@ th {
     direction: rtl !important;
     background-size: cover;
   }
+
   * {
     font-size: 11px !important;
   }
+
   td,
   th {
     border: 1px solid black;
     text-align: center !important;
   }
-  .v-table--density-default > .v-table__wrapper > table > tbody > tr > td,
-  .v-table--density-default > .v-table__wrapper > table > thead > tr > td,
-  .v-table--density-default > .v-table__wrapper > table > tfoot > tr > td {
+
+  .v-table--density-default>.v-table__wrapper>table>tbody>tr>td,
+  .v-table--density-default>.v-table__wrapper>table>thead>tr>td,
+  .v-table--density-default>.v-table__wrapper>table>tfoot>tr>td {
     height: 20px !important;
   }
+
   .hideOnPrint {
     display: none !important;
   }
@@ -1122,19 +1013,23 @@ th {
   .showOnPrint {
     display: block !important;
   }
+
   .printOnlyTd {
     display: table-cell;
   }
-  .v-table--density-default > .v-table__wrapper > table > tbody > tr > th,
-  .v-table--density-default > .v-table__wrapper > table > thead > tr > th,
-  .v-table--density-default > .v-table__wrapper > table > tfoot > tr > th,
+
+  .v-table--density-default>.v-table__wrapper>table>tbody>tr>th,
+  .v-table--density-default>.v-table__wrapper>table>thead>tr>th,
+  .v-table--density-default>.v-table__wrapper>table>tfoot>tr>th,
   .v-chip {
     height: 20px !important;
   }
+
   .wrapOnPrint {
     white-space: normal;
     overflow: auto;
   }
+
   table {
     border-spacing: 0px;
     border-collapse: separate;

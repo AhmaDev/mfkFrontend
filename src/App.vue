@@ -1,20 +1,7 @@
 <template>
   <v-app>
-    <v-navigation-drawer
-      theme="dark"
-      width="300"
-      class="navd"
-      v-if="isLoggedIn"
-      app
-      v-model="drawer"
-    >
-      <v-btn
-        @click="drawer = !drawer"
-        style="position: absolute"
-        class="ma-2 hidden-md-and-up"
-        flat
-        icon
-      >
+    <v-navigation-drawer theme="dark" width="300" class="navd" v-if="isLoggedIn" app v-model="drawer">
+      <v-btn @click="drawer = !drawer" style="position: absolute" class="ma-2 hidden-md-and-up" flat icon>
         <v-icon>mdi-menu</v-icon>
       </v-btn>
 
@@ -33,29 +20,16 @@
       <v-list>
         <template v-for="item in menu" :key="item.title">
           <template v-if="userInfo.idUser != 1">
-            <v-list-item
-              :prepend-icon="item.icon"
-              :value="item.route"
-              active-color="white"
-              :to="item.route"
-              rounded="xl"
-              class="mx-2"
-              v-if="item.onlyAdmin != true"
-            >
+            <v-list-item :prepend-icon="item.icon" :value="item.route" active-color="white" :to="item.route" rounded="xl"
+              class="mx-2" v-if="item.onlyAdmin != true">
               <v-list-item-title>
                 {{ item.title }}
               </v-list-item-title>
             </v-list-item>
           </template>
           <template v-if="userInfo.idUser == 1">
-            <v-list-item
-              :prepend-icon="item.icon"
-              :value="item.route"
-              active-color="white"
-              :to="item.route"
-              rounded="xl"
-              class="mx-2"
-            >
+            <v-list-item :prepend-icon="item.icon" :value="item.route" active-color="white" :to="item.route" rounded="xl"
+              class="mx-2">
               <v-list-item-title>
                 {{ item.title }}
               </v-list-item-title>
@@ -65,13 +39,7 @@
       </v-list>
       <template v-slot:append>
         <v-list>
-          <v-list-item
-            :prepend-icon="'mdi-power'"
-            active-color="white"
-            rounded="xl"
-            class="mx-2"
-            @click="logout()"
-          >
+          <v-list-item :prepend-icon="'mdi-power'" active-color="white" rounded="xl" class="mx-2" @click="logout()">
             <v-list-item-title> تسجيل خروج </v-list-item-title>
           </v-list-item>
         </v-list>
@@ -88,12 +56,7 @@
         </div>
       </template>
     </v-navigation-drawer>
-    <v-app-bar
-      color="blue-darken-4"
-      :image="getAssets('appbar.svg')"
-      v-if="isLoggedIn"
-      elevation="1"
-    >
+    <v-app-bar color="blue-darken-4" :image="getAssets('appbar.svg')" v-if="isLoggedIn" elevation="1">
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
       <v-app-bar-title>شركة مفخرة البناء</v-app-bar-title>
     </v-app-bar>
@@ -107,17 +70,9 @@
       </v-container>
     </v-main>
     <notifications />
-    <v-overlay
-      style="z-index: 10000000000000"
-      :model-value="$store.state.loading"
-      scrim="#000000"
-      class="align-center justify-center"
-    >
-      <v-progress-circular
-        color="white"
-        indeterminate
-        size="64"
-      ></v-progress-circular>
+    <v-overlay style="z-index: 10000000000000" :model-value="$store.state.loading" scrim="#000000"
+      class="align-center justify-center">
+      <v-progress-circular color="white" indeterminate size="64"></v-progress-circular>
     </v-overlay>
   </v-app>
 </template>
@@ -147,6 +102,11 @@ export default {
         title: "الغيابات",
         route: "/absences",
         icon: "mdi-card-account-details-outline",
+      },
+      {
+        title: "الديون",
+        route: "/loans",
+        icon: "mdi-credit-card-marker-outline",
       },
       {
         title: "الاعدادات",
