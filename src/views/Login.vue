@@ -7,38 +7,16 @@
         <br />
         <br />
         <v-form v-model="form" @submit.prevent="onSubmit">
-          <v-text-field
-            v-model="email"
-            :readonly="loading"
-            :rules="[required]"
-            class="mb-2"
-            clearable
-            variant="outlined"
-            label="اسم المستخدم"
-            append-inner-icon="mdi-card-account-details-outline"
-          ></v-text-field>
+          <v-text-field v-model="email" :readonly="loading" :rules="[required]" class="mb-2" clearable variant="outlined"
+            label="اسم المستخدم" append-inner-icon="mdi-card-account-details-outline"></v-text-field>
 
-          <v-text-field
-            v-model="password"
-            :readonly="loading"
-            :rules="[required]"
-            clearable
-            variant="outlined"
-            label="كلمة المرور"
-            placeholder="ادخل كلمة المرور"
-            append-inner-icon="mdi-lock-outline"
-          ></v-text-field>
+          <v-text-field v-model="password" :readonly="loading" :rules="[required]" clearable variant="outlined"
+            label="كلمة المرور" type="password" placeholder="ادخل كلمة المرور"
+            append-inner-icon="mdi-lock-outline"></v-text-field>
 
           <br />
 
-          <v-btn
-            :loading="loading"
-            block
-            color="warning"
-            size="large"
-            type="submit"
-            elevation="0"
-          >
+          <v-btn :loading="loading" block color="warning" size="large" type="submit" elevation="0">
             دخول
           </v-btn>
         </v-form>

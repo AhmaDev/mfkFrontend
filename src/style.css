@@ -1,5 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Almarai&display=swap');
-* {font-family: 'Almarai', sans-serif; letter-spacing:normal !important;}
+@import url('https://fonts.googleapis.com/css2?family=Markazi+Text&display=swap');
+* {font-family: 'Tahoma', sans-serif; letter-spacing:normal !important;}
 
 .v-main, body, html {
     background-color: #EEE;
@@ -21,3 +21,4 @@
 .dp__menu {
   direction: ltr;
 }
+
