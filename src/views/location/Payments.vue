@@ -210,7 +210,7 @@
                   selectedPaymentCutId = cut.idPaymentCut;
                 selectedPaymentId = payment.idPayment;
                 chooseImage();
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              "
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  "
                 v-if="!auth.includes('add')" variant="text" color="success">اضافة
                 صورة وصل</v-btn>
               <input type="file" name="file" id="file" style="display: none" @change="uploadImage($event)"
@@ -222,7 +222,7 @@
                   selectedPaymentCutImageId = image.idPaymentCutImage;
                 zoomedImage = axios.defaults.baseURL + image.imagePath;
                 imageModal = true;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            "
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                "
                 alt="" />
             </td>
           </tr>
@@ -281,7 +281,7 @@
                     @click="
                       newPaymentCutForm.paymentId = payment.idPayment;
                     addNewPaymentCutDialog = true;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                "
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            "
                     v-if="
                       payment.paymentAmount +
                       payment.totalAdds -
@@ -454,8 +454,8 @@
         <v-text-field variant="outlined" v-model="editPaymentCutForm.receiver"></v-text-field>
         <br>
         <b>تاريخ : {{ parseDate(editPaymentCutForm.createdAt) }}</b>
-        <VueDatePicker :enable-time-picker="false" menu-class-name="dpMenuX" model-type="format" format="yyyy-MM-dd"
-          auto-apply :teleport="true" close-on-auto-apply no-swipe :clearable="false"
+        <VueDatePicker inline :enable-time-picker="false" menu-class-name="dpMenuX" model-type="format"
+          format="yyyy-MM-dd" auto-apply :teleport="true" close-on-auto-apply no-swipe :clearable="false"
           v-model="editPaymentCutForm.createdAt" />
         <br>
         <v-textarea variant="outlined" v-model="editPaymentCutForm.notice" label="الملاحظات"></v-textarea>
@@ -472,8 +472,8 @@
           v-model="editPaymentForm.paymentCount"></v-text-field>
         <br>
         <b>تاريخ : {{ parseDate(editPaymentForm.createdAt) }}</b>
-        <VueDatePicker :enable-time-picker="false" menu-class-name="dpMenuX" model-type="format" format="yyyy-MM-dd"
-          auto-apply :teleport="true" close-on-auto-apply no-swipe :clearable="false"
+        <VueDatePicker inline :enable-time-picker="false" menu-class-name="dpMenuX" model-type="format"
+          format="yyyy-MM-dd" auto-apply :teleport="true" close-on-auto-apply no-swipe :clearable="false"
           v-model="editPaymentForm.createdAt" />
         <br>
         <v-textarea variant="outlined" v-model="editPaymentForm.notice" label="التفاصيل"></v-textarea>
