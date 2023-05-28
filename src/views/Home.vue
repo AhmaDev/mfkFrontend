@@ -9,45 +9,26 @@
         </v-chip>
       </v-app-bar-title>
       <v-spacer></v-spacer>
-      <v-btn
-        @click="addNewLocationDialog = true"
-        color="success"
-        variant="elevated"
-        v-if="!auth.includes('add')"
-      >
+      <v-btn @click="addNewLocationDialog = true" color="success" variant="elevated" v-if="!auth.includes('add')">
         <v-icon start icon="mdi-plus"></v-icon>
         <span>اضافة موقع جديد</span>
       </v-btn>
     </v-app-bar>
     <div id="locations">
       <v-row>
-        <v-col
-          v-for="location in locations"
-          :key="location.idLocation"
-          cols="12"
-          md="3"
-        >
+        <v-col v-for="location in locations" :key="location.idLocation" cols="12" md="3">
           <v-card class="">
-            <v-img
-              :src="
-                `https://maps.googleapis.com/maps/api/staticmap?center=` +
-                location.geoLocation.slice(1, -1) +
-                `&zoom=16&scale=2&size=600x300&maptype=roadmap&format=png&key=AIzaSyBAbB0YnZF2pgdYMRSJMsbwXf0_7IbOk-g&markers=size:lar%7Ccolor:0xff0000%7Clabel:%7C` +
-                location.geoLocation.slice(1, -1)
-              "
-              height="200px"
-              cover
-            ></v-img>
+            <v-img :src="
+              `https://maps.googleapis.com/maps/api/staticmap?center=` +
+              location.geoLocation.slice(1, -1) +
+              `&zoom=16&scale=2&size=600x300&maptype=roadmap&format=png&key=AIzaSyBAbB0YnZF2pgdYMRSJMsbwXf0_7IbOk-g&markers=size:lar%7Ccolor:0xff0000%7Clabel:%7C` +
+              location.geoLocation.slice(1, -1)
+            " height="200px" cover></v-img>
             <v-card-title> {{ location.locationTitle }} </v-card-title>
             <v-card-subtitle> {{ location.position }} </v-card-subtitle>
             <v-divider class="my-2"></v-divider>
             <v-card-actions>
-              <v-btn
-                :to="'/location/' + location.idLocation"
-                color="orange-darken-2"
-                variant="elevated"
-                elevation="0"
-              >
+              <v-btn :to="'/location/' + location.idLocation" color="orange-darken-2" variant="elevated" elevation="0">
                 تفاصيل
               </v-btn>
 
@@ -62,67 +43,34 @@
         </v-col>
       </v-row>
     </div>
-    <v-dialog
-      transition="scale-transition"
-      v-model="addNewLocationDialog"
-      width="100%"
-      max-width="700"
-      :fullscreen="$vuetify.display.mobile"
-    >
+    <v-dialog transition="scale-transition" v-model="addNewLocationDialog" width="100%" max-width="700"
+      :fullscreen="$vuetify.display.mobile">
       <v-card class="pa-10">
-        <v-card-title
-          >اضافة موقع جديد
+        <v-card-title>اضافة موقع جديد
           <v-btn icon style="float: left" @click="addNewLocationDialog = false">
             <v-icon icon="mdi-close"></v-icon>
           </v-btn>
         </v-card-title>
         <br />
-        <v-text-field
-          variant="outlined"
-          prepend-inner-icon="mdi-account-circle-outline"
-          v-model="newLocationForm.locationTitle"
-          label="اسم صاحب الموقع"
-        ></v-text-field>
-        <v-text-field
-          variant="outlined"
-          prepend-inner-icon="mdi-map-marker-outline"
-          v-model="newLocationForm.position"
-          label="عنوان الموقع"
-        ></v-text-field>
-        <v-text-field
-          variant="outlined"
-          prepend-inner-icon="mdi-phone-outline"
-          v-model="newLocationForm.phoneNumber"
-          label="رقم هاتف صاحب الموقع"
-        ></v-text-field>
+        <v-text-field variant="outlined" prepend-inner-icon="mdi-account-circle-outline"
+          v-model="newLocationForm.locationTitle" label="اسم صاحب الموقع"></v-text-field>
+        <v-text-field variant="outlined" prepend-inner-icon="mdi-map-marker-outline" v-model="newLocationForm.position"
+          label="عنوان الموقع"></v-text-field>
+        <v-text-field variant="outlined" prepend-inner-icon="mdi-phone-outline" v-model="newLocationForm.phoneNumber"
+          label="رقم هاتف صاحب الموقع"></v-text-field>
         <v-row>
           <v-col cols="12">
             <b>نسبة الشركة</b>
           </v-col>
           <v-col cols="8">
-            <v-slider
-              :min="0"
-              :max="100"
-              v-model="newLocationForm.percentage"
-              color="primary"
-              :step="1"
-            ></v-slider>
+            <v-slider :min="0" :max="100" v-model="newLocationForm.percentage" color="primary" :step="1"></v-slider>
           </v-col>
           <v-col cols="4">
-            <v-text-field
-              v-model="newLocationForm.percentage"
-              variant="outlined"
-              hide-details
-              type="number"
-              density="compact"
-            ></v-text-field>
+            <v-text-field v-model="newLocationForm.percentage" variant="outlined" hide-details type="number"
+              density="compact"></v-text-field>
           </v-col>
         </v-row>
-        <v-alert
-          icon="mdi-map-marker-radius"
-          density="compact"
-          color="blue-darken-3"
-        >
+        <v-alert icon="mdi-map-marker-radius" density="compact" color="blue-darken-3">
           <v-row>
             <v-col>
               <span>قم باختيار الموقع على الخريطة</span>
@@ -134,29 +82,14 @@
             </v-col>
           </v-row>
         </v-alert>
-        <l-map
-          style="height: 400px"
-          class="rounded-lg elevation-3"
-          ref="map"
-          v-model:zoom="zoom"
-          :center="map.center"
-          @click="log($event)"
-        >
-          <l-tile-layer
-            url="https://mt0.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
-            layer-type="base"
-            name="OpenStreetMap"
-          ></l-tile-layer>
-          <l-marker
-            draggable
-            @update:lat-lng="changeLocation($event)"
-            :lat-lng="map.markerLatLng"
-          ></l-marker>
+        <l-map style="height: 400px" class="rounded-lg elevation-3" ref="map" v-model:zoom="zoom" :center="map.center"
+          @click="log($event)">
+          <l-tile-layer url="https://mt0.google.com/vt/lyrs=m&x={x}&y={y}&z={z}" layer-type="base"
+            name="OpenStreetMap"></l-tile-layer>
+          <l-marker draggable @update:lat-lng="changeLocation($event)" :lat-lng="map.markerLatLng"></l-marker>
         </l-map>
         <v-divider class="my-10"></v-divider>
-        <v-btn @click="addLocation()" size="large" block color="primary" dark
-          >اضافة</v-btn
-        >
+        <v-btn @click="addLocation()" size="large" block color="primary" dark>اضافة</v-btn>
       </v-card>
     </v-dialog>
   </div>
@@ -249,5 +182,4 @@ export default {
 };
 </script>
 
-<style>
-</style>
+<style></style>
