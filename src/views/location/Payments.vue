@@ -210,7 +210,7 @@
                   selectedPaymentCutId = cut.idPaymentCut;
                 selectedPaymentId = payment.idPayment;
                 chooseImage();
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              "
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        "
                 v-if="!auth.includes('add')" variant="text" color="success">اضافة
                 صورة وصل</v-btn>
               <input type="file" name="file" id="file" style="display: none" @change="uploadImage($event)"
@@ -222,7 +222,7 @@
                   selectedPaymentCutImageId = image.idPaymentCutImage;
                 zoomedImage = axios.defaults.baseURL + image.imagePath;
                 imageModal = true;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            "
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      "
                 alt="" />
             </td>
           </tr>
@@ -281,7 +281,7 @@
                     @click="
                       newPaymentCutForm.paymentId = payment.idPayment;
                     addNewPaymentCutDialog = true;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                "
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              "
                     v-if="
                       payment.paymentAmount +
                       payment.totalAdds -
@@ -452,6 +452,8 @@
       <v-card class="pa-5">
         <v-card-title>تعديل</v-card-title>
         <v-text-field label="اسم المستلم" variant="outlined" v-model="editPaymentCutForm.receiver"></v-text-field>
+        <v-text-field v-if="userId == 1" label="المبلغ" variant="outlined"
+          v-model="editPaymentCutForm.price"></v-text-field>
         <br>
         <b>تاريخ : {{ parseDate(editPaymentCutForm.createdAt) }}</b>
         <VueDatePicker inline :enable-time-picker="false" menu-class-name="dpMenuX" model-type="format"
@@ -633,6 +635,7 @@ export default {
   props: ["currency"],
   data: () => ({
     auth: [],
+    userId: 0,
     location: null,
     addNewPaymentDialog: false,
     addNewPaymentCutDialog: false,
@@ -682,6 +685,7 @@ export default {
     this.newPaymentForm.createdBy = JSON.parse(
       localStorage.getItem("userInfo")
     ).idUser;
+    this.userId = JSON.parse(localStorage.getItem("userInfo")).idUser;
     this.newPaymentCutForm.createdBy = JSON.parse(
       localStorage.getItem("userInfo")
     ).idUser;
