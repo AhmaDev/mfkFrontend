@@ -264,6 +264,12 @@
       <v-card class="pa-10">
         <h2 class="mb-3">اضافة وارد جديد</h2>
         <v-text-field variant="outlined" label="المبلغ" type="number" v-model="incomeForm.price"></v-text-field>
+        <br>
+        <b>تاريخ : {{ parseDate(incomeForm.createdAt) }}</b>
+        <VueDatePicker inline :enable-time-picker="false" menu-class-name="dpMenuX" model-type="format"
+          format="yyyy-MM-dd" auto-apply :teleport="true" close-on-auto-apply no-swipe :clearable="false"
+          v-model="incomeForm.createdAt" />
+        <br>
         <v-textarea variant="outlined" label="الملاحظات" v-model="incomeForm.notice"></v-textarea>
         <v-radio-group v-model="incomeForm.currency">
           <v-radio label="اضافة الى صندوق الدينار" value="dinar"></v-radio>
@@ -276,6 +282,12 @@
       <v-card class="pa-10">
         <h2 class="mb-3">اضافة مصاريف جديدة</h2>
         <v-text-field variant="outlined" label="المبلغ" type="number" v-model="outcomeForm.price"></v-text-field>
+        <br>
+        <b>تاريخ : {{ parseDate(outcomeForm.createdAt) }}</b>
+        <VueDatePicker inline :enable-time-picker="false" menu-class-name="dpMenuX" model-type="format"
+          format="yyyy-MM-dd" auto-apply :teleport="true" close-on-auto-apply no-swipe :clearable="false"
+          v-model="outcomeForm.createdAt" />
+        <br>
         <v-text-field variant="outlined" label="اسم المستلم" v-model="outcomeForm.recieverName"></v-text-field>
         <v-textarea variant="outlined" label="الملاحظات" v-model="outcomeForm.notice"></v-textarea>
         <v-radio-group v-model="outcomeForm.currency">
@@ -375,12 +387,14 @@ export default {
     incomeForm: {
       price: null,
       createdBy: null,
+      createdAt: null,
       notice: null,
       currency: null,
     },
     outcomeForm: {
       price: null,
       createdBy: null,
+      createdAt: null,
       notice: null,
       currency: null,
       recieverName: null,
@@ -398,6 +412,7 @@ export default {
   created: function () {
     var today = new Date();
     var lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+    this.incomeForm.createdAt = today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
     this.dateRange.push(
       today.getFullYear() + "-" + (today.getMonth() + 1) + "-01"
     );
