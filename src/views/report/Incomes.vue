@@ -404,6 +404,7 @@ export default {
       month: 1,
     },
     corporationModal: false,
+    lastDayOfMonth: 30,
     corporationForm: {
       totalCorps: 2,
       notice: '',
@@ -423,6 +424,7 @@ export default {
       "-" +
       lastDayOfMonth.getDate()
     );
+    this.lastDayOfMonth = lastDayOfMonth.getDate();
     this.fetch();
   },
   methods: {
@@ -594,7 +596,7 @@ export default {
       this.axios.get('employees').then(employees => {
         this.axios
           .get(
-            `absences?dateFrom=${year}-${this.sallaryForm.month}-01&dateTo=${year}-${this.sallaryForm.month}-31`
+            `absences?dateFrom=${year}-${this.sallaryForm.month}-01&dateTo=${year}-${this.sallaryForm.month}-${this.lastDayOfMonth}`
           )
           .then((absences) => {
             employees.data.forEach(employee => {
