@@ -140,6 +140,9 @@
               <td>
                 <v-btn v-if="!auth.includes('delete')" @click="deleteIncome(income.idIncome)" size="small" variant="text"
                   color="error" icon="mdi-delete-outline"></v-btn>
+                <v-btn v-if="!auth.includes('delete')"
+                  @click="editIncomeDialog = true; editIncomeForm = income; editIncomeForm.createdAt = parseDate(editIncomeForm.createdAt)"
+                  size="small" variant="text" color="info" icon="mdi-pencil-outline"></v-btn>
               </td>
             </tr>
           </tbody>
@@ -195,6 +198,9 @@
               <td>
                 <v-btn v-if="!auth.includes('delete')" @click="deleteOutcome(outcome.idOutcome)" size="small"
                   variant="text" color="error" icon="mdi-delete-outline"></v-btn>
+                <v-btn v-if="!auth.includes('delete')"
+                  @click="editOutcomeDialog = true; editOutcomeForm = outcome; editOutcomeForm.createdAt = parseDate(editOutcomeForm.createdAt)"
+                  size="small" variant="text" color="info" icon="mdi-pencil-outline"></v-btn>
               </td>
             </tr>
           </tbody>
@@ -365,6 +371,39 @@
           outcomes.reduce((a, b) => a + b.price, 0))" color="success" block>صرف النسب</v-btn>
       </v-card>
     </v-dialog>
+    <v-dialog v-model="editIncomeDialog" max-width="500">
+      <v-card class="pa-10">
+        <h2 class="mb-3">تعديل وارد</h2>
+        <v-text-field v-if="userId == 1" variant="outlined" label="المبلغ" type="number"
+          v-model="editIncomeForm.price"></v-text-field>
+        <br>
+        <b>تاريخ : {{ parseDate(editIncomeForm.createdAt) }}</b>
+        <VueDatePicker inline :enable-time-picker="false" menu-class-name="dpMenuX" model-type="format"
+          format="yyyy-MM-dd" auto-apply :teleport="true" close-on-auto-apply no-swipe :clearable="false"
+          v-model="editIncomeForm.createdAt" />
+        <br>
+        <v-textarea variant="outlined" label="الملاحظات" v-model="editIncomeForm.notice"></v-textarea>
+
+        <v-btn @click="saveIncome()" block color="success" dark>حفظ</v-btn>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="editOutcomeDialog" max-width="500">
+      <v-card class="pa-10">
+        <h2 class="mb-3">تعديل صادر</h2>
+        <v-text-field v-if="userId == 1" variant="outlined" label="المبلغ" type="number"
+          v-model="editOutcomeForm.price"></v-text-field>
+        <br>
+        <b>تاريخ : {{ parseDate(editOutcomeForm.createdAt) }}</b>
+        <VueDatePicker inline :enable-time-picker="false" menu-class-name="dpMenuX" model-type="format"
+          format="yyyy-MM-dd" auto-apply :teleport="true" close-on-auto-apply no-swipe :clearable="false"
+          v-model="editOutcomeForm.createdAt" />
+        <br>
+        <v-text-field variant="outlined" label="اسم المستلم" v-model="editOutcomeForm.recieverName"></v-text-field>
+        <v-textarea variant="outlined" label="الملاحظات" v-model="editOutcomeForm.notice"></v-textarea>
+        <v-btn @click="saveOutcome()" block color="success" dark>حفظ</v-btn>
+      </v-card>
+    </v-dialog>
+
   </div>
 </template>
 
@@ -373,6 +412,7 @@ import * as moment from "moment";
 export default {
   components: {},
   data: () => ({
+    userId: 0,
     auth: [],
     location: null,
     tab: "dinar",
@@ -391,6 +431,10 @@ export default {
       notice: null,
       currency: null,
     },
+    editIncomeForm: null,
+    editOutcomeForm: null,
+    editIncomeDialog: false,
+    editOutcomeDialog: false,
     outcomeForm: {
       price: null,
       createdBy: null,
@@ -459,7 +503,22 @@ export default {
         this.axios.delete("income/" + id).then(() => this.fetch());
       }
     },
+    async saveIncome() {
+      this.$store.state.loading = true;
+      await this.axios.put('income/' + this.editIncomeForm.idIncome, this.editIncomeForm);
+      this.$toast.success("تم التعديل");
+      this.editIncomeDialog = false;
+      this.$store.state.loading = false;
+    },
+    async saveOutcome() {
+      this.$store.state.loading = true;
+      await this.axios.put('outcome/' + this.editOutcomeForm.idOutcome, this.editOutcomeForm);
+      this.$toast.success("تم التعديل");
+      this.editOutcomeDialog = false;
+      this.$store.state.loading = false;
+    },
     fetch() {
+      this.userId = JSON.parse(localStorage.getItem("userInfo")).idUser;
       this.axios
         .get("user/" + JSON.parse(localStorage.getItem("userInfo")).idUser)
         .then((res) => {
