@@ -5,46 +5,18 @@
         {{ location.locationTitle }}
       </v-app-bar-title>
       <v-spacer></v-spacer>
-      <v-btn
-        @click="deleteLocation(location.idLocation)"
-        v-if="!auth.includes('delete')"
-        color="error"
-        >حذف الموقع</v-btn
-      >
+      <v-btn @click="deleteLocation(location.idLocation)" v-if="!auth.includes('delete')" color="error">حذف الموقع</v-btn>
     </v-app-bar>
     <v-app-bar app>
-      <v-tabs
-        :show-arrows="$vuetify.display.mobile"
-        stacked
-        v-model="tab"
-        color="primary"
-        dark
-        slider-color="primary"
-        @change="changeUrl($event)"
-      >
-        <v-tab
-          title="السلف بالدينار"
-          value="paymentsDinar"
-          prepend-icon="mdi-cash-multiple"
-        >
+      <v-tabs :show-arrows="$vuetify.display.mobile" stacked v-model="tab" color="primary" dark slider-color="primary"
+        @change="changeUrl($event)">
+        <v-tab title="السلف بالدينار" value="paymentsDinar" prepend-icon="mdi-cash-multiple">
         </v-tab>
-        <v-tab
-          title="السلف بالدولار"
-          value="paymentsDollar"
-          prepend-icon="mdi-currency-usd"
-        >
+        <v-tab title="السلف الثانوية" value="paymentsDollar" prepend-icon="mdi-cash-multiple">
         </v-tab>
-        <v-tab
-          title="معلومات الموقع"
-          value="info"
-          prepend-icon="mdi-information-outline"
-        >
+        <v-tab title="معلومات الموقع" value="info" prepend-icon="mdi-information-outline">
         </v-tab>
-        <v-tab
-          title="الصور المرفقة"
-          value="images"
-          prepend-icon="mdi-image-multiple-outline"
-        >
+        <v-tab title="الصور المرفقة" value="images" prepend-icon="mdi-image-multiple-outline">
         </v-tab>
       </v-tabs>
     </v-app-bar>

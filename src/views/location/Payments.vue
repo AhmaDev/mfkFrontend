@@ -13,7 +13,9 @@
       </v-col>
     </v-row>
     <div v-for="payment in payments" :key="payment.idPayment">
-      <v-card :id="'payment_' + payment.idPayment" class="elevation-5 rounded-lg ma-4">
+      <v-card
+        v-if="(reveiverSearch != null && payment.cuts.filter((e) => e.receiver == reveiverSearch).length > 0) || reveiverSearch == null"
+        :id="'payment_' + payment.idPayment" class="elevation-5 rounded-lg ma-4">
         <div class="pagePrint showOnPrint">
           <img src="printHeader.png" style="width: 100%" />
           <br />
@@ -124,14 +126,13 @@
                   @click="editPaymentForm = payment; editPaymentDialog = true;" icon>
                   <v-icon>mdi-pencil</v-icon>
                 </v-btn>
-                <v-chip color="info" v-if="
-                  payment.paymentAmount +
+                <v-chip color="info" v-if="payment.paymentAmount +
                   payment.totalAdds -
                   calculatePercentage(payment.paymentAmount) -
                   payment.addsPercentage -
                   payment.totalCut ==
                   0
-                ">
+                  ">
                   <v-icon icon="mdi-check" start></v-icon>
                   <span>تم صرف السلفة</span>
                 </v-chip>
@@ -205,13 +206,11 @@
                 @click="deletePaymentCut(cut.idPaymentCut)" icon>
                 <v-icon>mdi-delete-outline</v-icon>
               </v-btn>
-              <v-btn
-                @click="
-                  selectedPaymentCutId = cut.idPaymentCut;
-                selectedPaymentId = payment.idPayment;
-                chooseImage();
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        "
-                v-if="!auth.includes('add')" variant="text" color="success">اضافة
+              <v-btn @click="
+                selectedPaymentCutId = cut.idPaymentCut;
+              selectedPaymentId = payment.idPayment;
+              chooseImage();
+              " v-if="!auth.includes('add')" variant="text" color="success">اضافة
                 صورة وصل</v-btn>
               <input type="file" name="file" id="file" style="display: none" @change="uploadImage($event)"
                 accept="image/*" />
@@ -222,8 +221,7 @@
                   selectedPaymentCutImageId = image.idPaymentCutImage;
                 zoomedImage = axios.defaults.baseURL + image.imagePath;
                 imageModal = true;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      "
-                alt="" />
+                " alt="" />
             </td>
           </tr>
         </tbody>
@@ -277,19 +275,16 @@
                   </span>
                 </v-chip>
                 <template v-if="!auth.includes('add')">
-                  <v-btn style="float: left;"
-                    @click="
-                      newPaymentCutForm.paymentId = payment.idPayment;
-                    addNewPaymentCutDialog = true;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              "
-                    v-if="
-                      payment.paymentAmount +
-                      payment.totalAdds -
-                      calculatePercentage(payment.paymentAmount) -
-                      payment.addsPercentage -
-                      payment.totalCut >
-                      0
-                    " color="warning" variant="outlined">
+                  <v-btn style="float: left;" @click="
+                    newPaymentCutForm.paymentId = payment.idPayment;
+                  addNewPaymentCutDialog = true;
+                  " v-if="payment.paymentAmount +
+  payment.totalAdds -
+  calculatePercentage(payment.paymentAmount) -
+  payment.addsPercentage -
+  payment.totalCut >
+  0
+  " color="warning" variant="outlined">
                     <v-icon start icon="mdi-plus-circle-outline"></v-icon>
                     <span>اضافة حركة</span>
                   </v-btn>
@@ -392,8 +387,7 @@
         <br />
         <v-textarea variant="outlined" v-model="newPaymentForm.notice" label="الملاحظات"></v-textarea>
         <template v-if="payments.length > 0">
-          <template v-if="
-            payments[payments.length - 1].paymentAmount +
+          <template v-if="payments[payments.length - 1].paymentAmount +
             payments[payments.length - 1].totalAdds -
             calculatePercentage(
               payments[payments.length - 1].paymentAmount
@@ -401,7 +395,7 @@
             payments[payments.length - 1].addsPercentage -
             payments[payments.length - 1].totalCut >
             0
-          ">
+            ">
             <!-- <v-checkbox
               color="info"
               v-model="newPaymentMoveLastPayment"
@@ -489,9 +483,8 @@
         <v-divider class="my-2"></v-divider>
         <v-select label="نوع الحركة" :items="paymentCutMethods" item-title="title" item-value="value" disabled
           variant="outlined" transition="fade" @update:menu="fixMenu" v-model="newPaymentCutForm.method"></v-select>
-        <v-text-field variant="outlined" v-model="newPaymentCutForm.price" type="number" :label="
-          newPaymentCutForm.method == 'minus' ? 'مبلغ الصرف' : 'مبلغ الاضافة'
-        "></v-text-field>
+        <v-text-field variant="outlined" v-model="newPaymentCutForm.price" type="number" :label="newPaymentCutForm.method == 'minus' ? 'مبلغ الصرف' : 'مبلغ الاضافة'
+          "></v-text-field>
         <h3 class="text-red">{{ fixedNumber(newPaymentCutForm.price) }} <span
             v-if="currency == 'dinar' && newPaymentCutForm.price">د.ع</span>
           <span v-if="currency == 'dollar' && newPaymentCutForm.price">$</span>
@@ -569,10 +562,9 @@
             </span>
           </v-chip>
           <v-divider class="my-2"></v-divider>
-          <v-btn v-if="
-            payments.filter(
-              (e) => e.idPayment == newPaymentCutForm.paymentId
-            )[0].paymentAmount +
+          <v-btn v-if="payments.filter(
+            (e) => e.idPayment == newPaymentCutForm.paymentId
+          )[0].paymentAmount +
             payments
               .filter((e) => e.idPayment == newPaymentCutForm.paymentId)[0]
               .cuts.filter((e) => e.method == 'plus')
@@ -590,11 +582,10 @@
             )[0].totalCut -
             newPaymentCutForm.price >=
             0
-          " @click="addPaymentCut()" size="large" block color="primary" dark>صرف</v-btn>
-          <v-chip v-if="
-            payments.filter(
-              (e) => e.idPayment == newPaymentCutForm.paymentId
-            )[0].paymentAmount +
+            " @click="addPaymentCut()" size="large" block color="primary" dark>صرف</v-btn>
+          <v-chip v-if="payments.filter(
+            (e) => e.idPayment == newPaymentCutForm.paymentId
+          )[0].paymentAmount +
             payments
               .filter((e) => e.idPayment == newPaymentCutForm.paymentId)[0]
               .cuts.filter((e) => e.method == 'plus')
@@ -612,7 +603,7 @@
             )[0].totalCut -
             newPaymentCutForm.price <
             0
-          " color="error">
+            " color="error">
             المبلغ غير كافي
           </v-chip>
         </div>

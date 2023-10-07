@@ -24,7 +24,7 @@
         @update:modelValue="search()" slider-color="primary">
         <v-tab title="صندوق الدينار" value="dinar" prepend-icon="mdi-cash-multiple">
         </v-tab>
-        <v-tab title="صندوق الدولار" value="dollar" prepend-icon="mdi-currency-usd">
+        <v-tab title="الصندوق الثانوي" value="dollar" prepend-icon="mdi-cash-multiple">
         </v-tab>
       </v-tabs>
     </v-app-bar>

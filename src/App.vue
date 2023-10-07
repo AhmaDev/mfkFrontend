@@ -114,6 +114,11 @@ export default {
         icon: "mdi-cog-outline",
         onlyAdmin: true,
       },
+      // {
+      //   title: "الموقع الالكتروني",
+      //   route: "/website",
+      //   icon: "mdi-web",
+      // },
     ],
   }),
   mounted: function () {

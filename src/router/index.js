@@ -55,6 +55,11 @@ const routes = [
     name: "settings",
     component: () => import("../views/Settings.vue"),
   },
+  {
+    path: "/website",
+    name: "Website",
+    component: () => import("../views/Website.vue"),
+  },
 ];
 
 const router = createRouter({
