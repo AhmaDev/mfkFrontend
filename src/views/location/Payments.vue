@@ -206,14 +206,20 @@
                 @click="deletePaymentCut(cut.idPaymentCut)" icon>
                 <v-icon>mdi-delete-outline</v-icon>
               </v-btn>
+              <v-btn v-if="!auth.includes('delete')" variant="plain" color="warning"
+                @click="selectedPaymentCutId = cut.idPaymentCut; selectedPaymentId = payment.idPayment; cameraDialog = true"
+                icon>
+                <v-icon>mdi-camera</v-icon>
+              </v-btn>
               <v-btn @click="
                 selectedPaymentCutId = cut.idPaymentCut;
               selectedPaymentId = payment.idPayment;
               chooseImage();
               " v-if="!auth.includes('add')" variant="text" color="success">اضافة
                 صورة وصل</v-btn>
-              <input type="file" name="file" id="file" style="display: none" @change="uploadImage($event)"
+              <input type="file" name="file" id="file" style="display: none;" @change="uploadImage($event)"
                 accept="image/*" />
+
               <img v-for="image in paymentCutImages.filter(
                 (e) => e.paymentCutId == cut.idPaymentCut
               )" :key="image.idPaymentCutImage" :src="axios.defaults.baseURL + image.imagePath" class="paymentCutImage"
@@ -616,14 +622,26 @@
       <img @click="imageModal = false" :src="zoomedImage" style="height: 700px" alt="" />
       <v-btn v-if="!auth.includes('delete')" @click="deletePaymentCutImage()" color="error">حذف الصورة</v-btn>
     </v-dialog>
+    <v-dialog v-model="cameraDialog" width="500">
+      <v-card class="pa-5">
+        <camera ref="camera" :resolution="{ width: 480, height: 720 }" autoplay></camera>
+        <br>
+        <v-btn @click="captureImage()" color="warning">التقاط الصورة</v-btn>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script>
 import * as moment from "moment";
 import * as printJS from "print-js";
+import Camera from "simple-vue-camera";
+
 export default {
   props: ["currency"],
+  components: {
+    Camera
+  },
   data: () => ({
     auth: [],
     userId: 0,
@@ -641,6 +659,7 @@ export default {
     payments: [],
     reveiverSearch: null,
     recievers: [],
+    cameraDialog: false,
     selectedPaymentCutId: 0,
     paymentCutImages: [],
     selectedPaymentId: 0,
@@ -687,6 +706,25 @@ export default {
       now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate();
   },
   methods: {
+    async captureImage() {
+      const blob = await this.$refs.camera.snapshot()
+      await this.$refs.camera.pause()
+      this.$store.state.loading = true;
+      let userInfo = JSON.parse(localStorage.getItem("userInfo"));
+      var formData = new FormData();
+      var imagefile = blob;
+      formData.append("file", imagefile);
+      formData.append("paymentCutId", this.selectedPaymentCutId);
+      formData.append("locationId", this.$route.params.id);
+      formData.append("paymentId", this.selectedPaymentId);
+      this.axios
+        .post("addPaymentCutImage?destination=paymentCut", formData)
+        .then(() => {
+          this.$toast.success("تم اضافة صورة");
+          this.fetch();
+        })
+        .finally(() => (this.$store.state.loading = false));
+    },
     fixedNumber(n) {
       if (n) {
         let num = parseFloat(n);
