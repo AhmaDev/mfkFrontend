@@ -708,9 +708,9 @@ export default {
   methods: {
     async captureImage() {
       const blob = await this.$refs.camera.snapshot(
-        { width: 720, height: 1280 },
-        "image/png",
-        1
+        { width: 1080, height: 1920 },
+        "image/jpg",
+        0.8
       )
       await this.$refs.camera.pause()
       this.$store.state.loading = true;
