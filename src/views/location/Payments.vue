@@ -707,7 +707,11 @@ export default {
   },
   methods: {
     async captureImage() {
-      const blob = await this.$refs.camera.snapshot()
+      const blob = await this.$refs.camera.snapshot(
+        { width: 720, height: 1280 },
+        "image/png",
+        1
+      )
       await this.$refs.camera.pause()
       this.$store.state.loading = true;
       let userInfo = JSON.parse(localStorage.getItem("userInfo"));
