@@ -18,14 +18,17 @@
       <v-row>
         <v-col v-for="location in locations" :key="location.idLocation" cols="12" md="3">
           <v-card class="">
-            <v-img :src="
+            <!-- <v-img :src="
               `https://maps.googleapis.com/maps/api/staticmap?center=` +
               location.geoLocation.slice(1, -1) +
               `&zoom=16&scale=2&size=600x300&maptype=roadmap&format=png&key=AIzaSyBAbB0YnZF2pgdYMRSJMsbwXf0_7IbOk-g&markers=size:lar%7Ccolor:0xff0000%7Clabel:%7C` +
               location.geoLocation.slice(1, -1)
-            " height="200px" cover></v-img>
+            " height="200px" cover></v-img> -->
             <v-card-title> {{ location.locationTitle }} </v-card-title>
+            <v-divider class="mb-2"></v-divider>
             <v-card-subtitle> {{ location.position }} </v-card-subtitle>
+            <v-divider class="my-2"></v-divider>
+            <v-card-subtitle> تاريخ الاضافة: {{ $formatDate(location.createdAt) }} </v-card-subtitle>
             <v-divider class="my-2"></v-divider>
             <v-card-actions>
               <v-btn :to="'/location/' + location.idLocation" color="orange-darken-2" variant="elevated" elevation="0">

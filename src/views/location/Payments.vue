@@ -311,7 +311,7 @@
         <div v-for="image in paymentCutImages.filter(
           (e) => e.paymentId == payment.idPayment
         )" :key="image.idPaymentCutImage" class="pagePrint showOnPrint" style="padding: 30px">
-          <img :src="axios.defaults.baseURL + image.imagePath" style="height: 20cm; width: 19cm" alt="" />
+          <img :src="axios.defaults.baseURL + image.imagePath" style="height: 25cm; " alt="" />
         </div>
       </v-card>
       <v-divider class="my-10"></v-divider>
@@ -708,7 +708,7 @@ export default {
   methods: {
     async captureImage() {
       const blob = await this.$refs.camera.snapshot(
-        { width: 1080, height: 1920 },
+        { width: 2480, height: 3508 },
         "image/jpg",
         0.8
       )
