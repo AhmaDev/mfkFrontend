@@ -856,10 +856,10 @@ export default {
     },
     loanPayNotice(id) {
       var loan = this.loans.filter((l) => l.idLoan == id);
-      var location = this.locations.filter(e => e.idLocation == loan[0].locationId);
-      if (loan.length == 0 || location.length == 0) {
+      if (loan.length == 0) {
         return "تم حذف قيد الدين";
       } else {
+        var location = this.locations.filter(e => e.idLocation == loan[0].locationId);
         return `تسديد للموقع : ${location[0].locationTitle} --- تاريخ قيد الدين : ${this.parseDate(loan[0].createdAt)}`;
       }
     },

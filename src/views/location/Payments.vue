@@ -188,10 +188,10 @@
                   </b>
                 </v-chip>
               </td>
-              <td>
+              <td style="font-size:18px; font-weight:bold">
                 {{ parseDate(cut.createdAt) }}
               </td>
-              <td v-if="cut.method == 'minus'">{{ cut.receiver }}</td>
+              <td style="font-size:18px; font-weight:bold" v-if="cut.method == 'minus'">{{ cut.receiver }}</td>
               <td v-if="cut.method == 'plus'">
                 <v-chip color="success">اضافة نسبة الشركة
                   {{ calculatePercentage(cut.price, payment).toLocaleString() }}
@@ -488,139 +488,149 @@
         <v-btn @click="savePayment()" block color="primary" dark>حفظ</v-btn>
       </v-card>
     </v-dialog>
-    <v-dialog v-model="addNewPaymentCutDialog" max-width="500px" transition="dialog-transition">
+    <v-dialog v-model="addNewPaymentCutDialog" max-width="1000px" transition="dialog-transition">
       <v-card class="pa-5">
         <v-card-title>اضافة حركة</v-card-title>
         <v-divider class="my-2"></v-divider>
-        <v-select label="نوع الحركة" :items="paymentCutMethods" item-title="title" item-value="value" disabled
-          variant="outlined" transition="fade" @update:menu="fixMenu" v-model="newPaymentCutForm.method"></v-select>
-        <v-text-field variant="outlined" v-model="newPaymentCutForm.price" type="number" :label="newPaymentCutForm.method == 'minus' ? 'مبلغ الصرف' : 'مبلغ الاضافة'
-          "></v-text-field>
-        <h3 class="text-red">{{ fixedNumber(newPaymentCutForm.price) }} <span
-            v-if="currency == 'dinar' && newPaymentCutForm.price">د.ع</span>
-          <span v-if="currency == 'dollar' && newPaymentCutForm.price">$</span>
-        </h3>
-        <br>
-        <small class="mb-1">
-          <div>تاريخ الحركة : {{ parseDate(newPaymentCutForm.createdAt) }}</div>
-        </small>
-        <VueDatePicker inline model-type="format" format="yyyy-MM-dd" auto-apply close-on-auto-apply no-swipe
-          :clearable="false" v-model="newPaymentCutForm.createdAt" />
-        <br />
-        <v-text-field variant="outlined" v-if="newPaymentCutForm.method == 'minus'" v-model="newPaymentCutForm.receiver"
-          label="اسم المستلم"></v-text-field>
-        <v-textarea variant="outlined" v-model="newPaymentCutForm.notice" label="الملاحظات"></v-textarea>
-        <div v-if="newPaymentCutForm.method == 'minus'">
-          <v-chip color="warning">
-            <span>اقصى مبلغ يمكن صرفه :
-              <b>
-                {{
-                  (
-                    payments.filter(
-                      (e) => e.idPayment == newPaymentCutForm.paymentId
-                    )[0].paymentAmount +
-                    payments.filter(
-                      (e) => e.idPayment == newPaymentCutForm.paymentId
-                    )[0].totalAdds -
-                    calculatePercentage(
-                      payments.filter(
-                        (e) => e.idPayment == newPaymentCutForm.paymentId
-                      )[0].paymentAmount
-                    ) -
-                    payments.filter(
-                      (e) => e.idPayment == newPaymentCutForm.paymentId
-                    )[0].addsPercentage -
-                    payments.filter(
-                      (e) => e.idPayment == newPaymentCutForm.paymentId
-                    )[0].totalCut
-                  ).toLocaleString()
-                }}
-                <span v-if="currency == 'dinar'">د.ع</span>
-                <span v-if="currency == 'dollar'">$</span>
-              </b>
-            </span>
-          </v-chip>
-          <br />
-          <br />
-          <v-chip color="info">
-            <span>المبلغ المتبقي بعد الصرف :
-              <b>
-                {{
-                  (
-                    payments.filter(
-                      (e) => e.idPayment == newPaymentCutForm.paymentId
-                    )[0].paymentAmount +
-                    payments.filter(
-                      (e) => e.idPayment == newPaymentCutForm.paymentId
-                    )[0].totalAdds -
-                    calculatePercentage(
-                      payments.filter(
-                        (e) => e.idPayment == newPaymentCutForm.paymentId
-                      )[0].paymentAmount
-                    ) -
-                    payments.filter(
-                      (e) => e.idPayment == newPaymentCutForm.paymentId
-                    )[0].addsPercentage -
-                    payments.filter(
-                      (e) => e.idPayment == newPaymentCutForm.paymentId
-                    )[0].totalCut -
-                    newPaymentCutForm.price
-                  ).toLocaleString()
-                }}
-                <span v-if="currency == 'dinar'">د.ع</span>
-                <span v-if="currency == 'dollar'">$</span>
-              </b>
-            </span>
-          </v-chip>
-          <v-divider class="my-2"></v-divider>
-          <v-btn v-if="payments.filter(
-            (e) => e.idPayment == newPaymentCutForm.paymentId
-          )[0].paymentAmount +
-            payments
-              .filter((e) => e.idPayment == newPaymentCutForm.paymentId)[0]
-              .cuts.filter((e) => e.method == 'plus')
-              .reduce((a, b) => a + b.price, 0) -
-            calculatePercentage(
-              payments.filter(
+        <v-row>
+          <v-col>
+
+            <v-select label="نوع الحركة" :items="paymentCutMethods" item-title="title" item-value="value" disabled
+              variant="outlined" transition="fade" @update:menu="fixMenu" v-model="newPaymentCutForm.method"></v-select>
+            <v-text-field variant="outlined" v-model="newPaymentCutForm.price" type="number" :label="newPaymentCutForm.method == 'minus' ? 'مبلغ الصرف' : 'مبلغ الاضافة'
+              "></v-text-field>
+            <h3 class="text-red">{{ fixedNumber(newPaymentCutForm.price) }} <span
+                v-if="currency == 'dinar' && newPaymentCutForm.price">د.ع</span>
+              <span v-if="currency == 'dollar' && newPaymentCutForm.price">$</span>
+            </h3>
+            <br>
+
+            <v-text-field variant="outlined" v-if="newPaymentCutForm.method == 'minus'"
+              v-model="newPaymentCutForm.receiver" label="اسم المستلم"></v-text-field>
+            <v-textarea variant="outlined" v-model="newPaymentCutForm.notice" label="الملاحظات"></v-textarea>
+            <div v-if="newPaymentCutForm.method == 'minus'">
+              <v-chip color="warning">
+                <span>اقصى مبلغ يمكن صرفه :
+                  <b>
+                    {{
+                      (
+                        payments.filter(
+                          (e) => e.idPayment == newPaymentCutForm.paymentId
+                        )[0].paymentAmount +
+                        payments.filter(
+                          (e) => e.idPayment == newPaymentCutForm.paymentId
+                        )[0].totalAdds -
+                        calculatePercentage(
+                          payments.filter(
+                            (e) => e.idPayment == newPaymentCutForm.paymentId
+                          )[0].paymentAmount
+                        ) -
+                        payments.filter(
+                          (e) => e.idPayment == newPaymentCutForm.paymentId
+                        )[0].addsPercentage -
+                        payments.filter(
+                          (e) => e.idPayment == newPaymentCutForm.paymentId
+                        )[0].totalCut
+                      ).toLocaleString()
+                    }}
+                    <span v-if="currency == 'dinar'">د.ع</span>
+                    <span v-if="currency == 'dollar'">$</span>
+                  </b>
+                </span>
+              </v-chip>
+              <br />
+              <br />
+              <v-chip color="info">
+                <span>المبلغ المتبقي بعد الصرف :
+                  <b>
+                    {{
+                      (
+                        payments.filter(
+                          (e) => e.idPayment == newPaymentCutForm.paymentId
+                        )[0].paymentAmount +
+                        payments.filter(
+                          (e) => e.idPayment == newPaymentCutForm.paymentId
+                        )[0].totalAdds -
+                        calculatePercentage(
+                          payments.filter(
+                            (e) => e.idPayment == newPaymentCutForm.paymentId
+                          )[0].paymentAmount
+                        ) -
+                        payments.filter(
+                          (e) => e.idPayment == newPaymentCutForm.paymentId
+                        )[0].addsPercentage -
+                        payments.filter(
+                          (e) => e.idPayment == newPaymentCutForm.paymentId
+                        )[0].totalCut -
+                        newPaymentCutForm.price
+                      ).toLocaleString()
+                    }}
+                    <span v-if="currency == 'dinar'">د.ع</span>
+                    <span v-if="currency == 'dollar'">$</span>
+                  </b>
+                </span>
+              </v-chip>
+              <v-divider class="my-2"></v-divider>
+              <v-btn v-if="payments.filter(
                 (e) => e.idPayment == newPaymentCutForm.paymentId
-              )[0].paymentAmount,
-              payments.filter(
+              )[0].paymentAmount +
+                payments
+                  .filter((e) => e.idPayment == newPaymentCutForm.paymentId)[0]
+                  .cuts.filter((e) => e.method == 'plus')
+                  .reduce((a, b) => a + b.price, 0) -
+                calculatePercentage(
+                  payments.filter(
+                    (e) => e.idPayment == newPaymentCutForm.paymentId
+                  )[0].paymentAmount,
+                  payments.filter(
+                    (e) => e.idPayment == newPaymentCutForm.paymentId
+                  )[0]
+                ) -
+                payments.filter(
+                  (e) => e.idPayment == newPaymentCutForm.paymentId
+                )[0].totalCut -
+                newPaymentCutForm.price >=
+                0
+                " @click="addPaymentCut()" size="large" block color="primary" dark>صرف</v-btn>
+              <v-chip v-if="payments.filter(
                 (e) => e.idPayment == newPaymentCutForm.paymentId
-              )[0]
-            ) -
-            payments.filter(
-              (e) => e.idPayment == newPaymentCutForm.paymentId
-            )[0].totalCut -
-            newPaymentCutForm.price >=
-            0
-            " @click="addPaymentCut()" size="large" block color="primary" dark>صرف</v-btn>
-          <v-chip v-if="payments.filter(
-            (e) => e.idPayment == newPaymentCutForm.paymentId
-          )[0].paymentAmount +
-            payments
-              .filter((e) => e.idPayment == newPaymentCutForm.paymentId)[0]
-              .cuts.filter((e) => e.method == 'plus')
-              .reduce((a, b) => a + b.price, 0) -
-            calculatePercentage(
-              payments.filter(
-                (e) => e.idPayment == newPaymentCutForm.paymentId
-              )[0].paymentAmount,
-              payments.filter(
-                (e) => e.idPayment == newPaymentCutForm.paymentId
-              )[0]
-            ) -
-            payments.filter(
-              (e) => e.idPayment == newPaymentCutForm.paymentId
-            )[0].totalCut -
-            newPaymentCutForm.price <
-            0
-            " color="error">
-            المبلغ غير كافي
-          </v-chip>
-        </div>
-        <div v-else>
-          <v-btn @click="addPaymentCut()" size="large" block color="primary" dark>اضافة</v-btn>
-        </div>
+              )[0].paymentAmount +
+                payments
+                  .filter((e) => e.idPayment == newPaymentCutForm.paymentId)[0]
+                  .cuts.filter((e) => e.method == 'plus')
+                  .reduce((a, b) => a + b.price, 0) -
+                calculatePercentage(
+                  payments.filter(
+                    (e) => e.idPayment == newPaymentCutForm.paymentId
+                  )[0].paymentAmount,
+                  payments.filter(
+                    (e) => e.idPayment == newPaymentCutForm.paymentId
+                  )[0]
+                ) -
+                payments.filter(
+                  (e) => e.idPayment == newPaymentCutForm.paymentId
+                )[0].totalCut -
+                newPaymentCutForm.price <
+                0
+                " color="error">
+                المبلغ غير كافي
+              </v-chip>
+            </div>
+            <div v-else>
+              <v-btn @click="addPaymentCut()" size="large" block color="primary" dark>اضافة</v-btn>
+            </div>
+
+          </v-col>
+          <v-col>
+            <small class="mb-1">
+              <div>تاريخ الحركة : {{ parseDate(newPaymentCutForm.createdAt) }}</div>
+            </small>
+            <VueDatePicker inline model-type="format" format="yyyy-MM-dd" auto-apply close-on-auto-apply no-swipe
+              :clearable="false" v-model="newPaymentCutForm.createdAt" />
+            <br />
+          </v-col>
+        </v-row>
+
       </v-card>
     </v-dialog>
     <v-dialog width="500" v-model="imageModal">
