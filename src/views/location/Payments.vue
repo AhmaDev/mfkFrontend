@@ -11,96 +11,39 @@
           @update:menu="fixMenu"></v-autocomplete>
 
       </v-col>
+      <v-col cols="auto">
+        <v-btn v-print="'#' + 'payment_all'" color="warning" variant="elevated" elevation="0">طباعة الكل</v-btn>
+      </v-col>
     </v-row>
-    <div v-for="payment in payments" :key="payment.idPayment">
-      <v-card
-        v-if="(reveiverSearch != null && payment.cuts.filter((e) => e.receiver == reveiverSearch).length > 0) || reveiverSearch == null"
-        :id="'payment_' + payment.idPayment" class="elevation-5 rounded-lg ma-4">
-        <div class="pagePrint showOnPrint">
-          <img src="printHeader.png" style="width: 100%" />
-          <br />
-          <br />
-          <br />
-          <br />
-          <center>
-            <h1>شركة مفخرة البناء للمقاولات العامة</h1>
-            <h3>تصميم - تنفيذ - اشراف 07806206666 - 07800442272</h3>
-            <h3>بغداد - القادسية - مدخل ساحة قحطان</h3>
-          </center>
-          <div class="pagePrintTitles">
-            <h3>السيد : {{ location.locationTitle }}</h3>
-            <h3>الموقع : {{ location.position }}</h3>
-            <h3>رقم السلفة : ({{ payment.paymentCount }})</h3>
-            <h3>تاريخ استلام السلفة : {{ parseDate(payment.createdAt) }}</h3>
-            <h3>
-              مبلغ السلفة : {{ payment.paymentAmount.toLocaleString() }}
-              <span v-if="currency == 'dinar'">د.ع</span>
-              <span v-if="currency == 'dollar'">$</span>
-            </h3>
-            <h3>
-              النسبة ({{ location.percentage }} %) من المبلغ الواجب صرفه (اجور
-              التنفيذ) :
-              {{
-                calculatePercentage(
-                  payment.paymentAmount,
-                  payment
-                ).toLocaleString()
-              }}
-              <span v-if="currency == 'dinar'">د.ع</span>
-              <span v-if="currency == 'dollar'">$</span>
-            </h3>
-            <h3>
-              المبلغ الواجب صرفه بعد استقطاع نسبة تنفيذ العمل :
-              {{
-                (
-                  payment.paymentAmount -
-                  calculatePercentage(payment.paymentAmount, payment)
-                ).toLocaleString()
-              }}
-              <span v-if="currency == 'dinar'">د.ع</span>
-              <span v-if="currency == 'dollar'">$</span>
-            </h3>
-          </div>
-        </div>
-        <v-table class="px-0 rounded-0" theme="light" hover>
-          <thead class="bg-grey-lighten-2">
-            <tr>
-              <th style="padding: 0px" colspan="6" class="header-space printOnlyTd">
-                <img src="printHeader.png" style="width: 100%" />
-              </th>
-            </tr>
-            <tr class="hideOnPrint" style="background-color: #ffffff">
-              <th style="padding: 0px" colspan="6" class="header-space">
-                <v-table hover theme="light" class="headerTable">
-                  <thead>
-                    <tr>
-                      <th width="120px">رقم السلفة</th>
-                      <th width="120px">مبلغ السلفة</th>
-                      <th width="150px">تاريخ الاستلام</th>
-                      <th>النسبة</th>
-                      <th>اجور الشركة</th>
-                      <th>السلفة بعد الاستقطاع</th>
-                      <th width="400px">التفاصيل</th>
-                      <th class="hideOnPrint">الاجراءات</th>
-                    </tr>
-                  </thead>
-          <tbody>
-            <tr>
-              <td>
-                <b class="text-info">{{ payment.paymentCount }}</b>
-              </td>
-              <td>
-                <v-chip color="success">
-                  <b>
-                    {{ payment.paymentAmount.toLocaleString() }}
-                    <span v-if="currency == 'dinar'">د.ع</span>
-                    <span v-if="currency == 'dollar'">$</span>
-                  </b>
-                </v-chip>
-              </td>
-              <td>{{ parseDate(payment.createdAt) }}</td>
-              <td>{{ location.percentage }} %</td>
-              <td class="text-warning font-weight-bold">
+    <div :id="'payment_all'">
+      <div v-for="payment in payments" :key="payment.idPayment">
+        <v-card
+          v-if="(reveiverSearch != null && payment.cuts.filter((e) => e.receiver == reveiverSearch).length > 0) || reveiverSearch == null"
+          :id="'payment_' + payment.idPayment" class="elevation-5 rounded-lg ma-4">
+          <div class="pagePrint showOnPrint">
+            <img src="printHeader.png" style="width: 100%" />
+            <br />
+            <br />
+            <br />
+            <br />
+            <center>
+              <h1>شركة مفخرة البناء للمقاولات العامة</h1>
+              <h3>تصميم - تنفيذ - اشراف 07806206666 - 07800442272</h3>
+              <h3>بغداد - القادسية - مدخل ساحة قحطان</h3>
+            </center>
+            <div class="pagePrintTitles">
+              <h3>السيد : {{ location.locationTitle }}</h3>
+              <h3>الموقع : {{ location.position }}</h3>
+              <h3>رقم السلفة : ({{ payment.paymentCount }})</h3>
+              <h3>تاريخ استلام السلفة : {{ parseDate(payment.createdAt) }}</h3>
+              <h3>
+                مبلغ السلفة : {{ payment.paymentAmount.toLocaleString() }}
+                <span v-if="currency == 'dinar'">د.ع</span>
+                <span v-if="currency == 'dollar'">$</span>
+              </h3>
+              <h3>
+                النسبة ({{ location.percentage }} %) من المبلغ الواجب صرفه (اجور
+                التنفيذ) :
                 {{
                   calculatePercentage(
                     payment.paymentAmount,
@@ -109,8 +52,9 @@
                 }}
                 <span v-if="currency == 'dinar'">د.ع</span>
                 <span v-if="currency == 'dollar'">$</span>
-              </td>
-              <td class="text-success font-weight-bold">
+              </h3>
+              <h3>
+                المبلغ الواجب صرفه بعد استقطاع نسبة تنفيذ العمل :
                 {{
                   (
                     payment.paymentAmount -
@@ -119,135 +63,195 @@
                 }}
                 <span v-if="currency == 'dinar'">د.ع</span>
                 <span v-if="currency == 'dollar'">$</span>
-              </td>
-              <td class="wrapOnPrint">{{ payment.notice }}</td>
-              <td class="hideOnPrint">
-                <v-btn v-if="!auth.includes('edit')" variant="plain" color="info"
-                  @click="editPaymentForm = payment; editPaymentDialog = true;" icon>
-                  <v-icon>mdi-pencil</v-icon>
-                </v-btn>
-                <v-chip color="info" v-if="payment.paymentAmount +
-                  payment.totalAdds -
-                  calculatePercentage(payment.paymentAmount) -
-                  payment.addsPercentage -
-                  payment.totalCut ==
-                  0
-                  ">
-                  <v-icon icon="mdi-check" start></v-icon>
-                  <span>تم صرف السلفة</span>
-                </v-chip>
-                &nbsp;
-                <v-btn v-print="'#' + 'payment_' + payment.idPayment" variant="outlined" color="info">
-                  <v-icon start icon="mdi-printer"></v-icon>
-                  <span>طباعة</span>
-                </v-btn>
-                &nbsp;
-                <v-btn variant="outlined" color="red" @click="deletePayment(payment.idPayment)"
-                  v-if="!auth.includes('delete')">
-                  <v-icon start icon="mdi-delete-outline"></v-icon>
-                  <span>حذف السلفة</span>
-                </v-btn>
-              </td>
-            </tr>
-          </tbody>
-        </v-table>
-        <!-- <br class="showOnPrint" /> -->
-        </th>
-        </tr>
-        <tr v-if="payment.cuts.length > 0">
-          <th width="120px">الحركة</th>
-          <th width="120px">المبلغ</th>
-          <th>تاريخ</th>
-          <th>اسم المستلم</th>
-          <th width="50%">الملاحظات</th>
-          <th class="hideOnPrint">الاجراءات</th>
-        </tr>
-        </thead>
-        <tbody v-if="payment.cuts.length > 0">
-          <tr v-for="cut in reveiverSearch == null
-            ? payment.cuts
-            : payment.cuts.filter((e) => e.receiver == reveiverSearch)" :key="cut.idPaymentCut">
-            <td>
-              <b v-if="cut.method == 'minus'" class="text-red">صرف</b>
-              <b v-if="cut.method == 'plus'" class="text-success">اضافة</b>
-            </td>
-            <td>
-              <v-chip :color="cut.method == 'minus' ? 'error' : 'success'">
-                <b>
-                  {{
-                    cut.price > 0
-                    ? cut.price.toLocaleString()
-                    : (cut.price * -1).toLocaleString()
-                  }}
-                  <span v-if="currency == 'dinar'">د.ع</span>
-                  <span v-if="currency == 'dollar'">$</span>
-                </b>
-              </v-chip>
-            </td>
-            <td>
-              {{ parseDate(cut.createdAt) }}
-            </td>
-            <td v-if="cut.method == 'minus'">{{ cut.receiver }}</td>
-            <td v-if="cut.method == 'plus'">
-              <v-chip color="success">اضافة نسبة الشركة
-                {{ calculatePercentage(cut.price, payment).toLocaleString() }}
-                &nbsp;
-                <span v-if="currency == 'dinar'">د.ع</span>
-                <span v-if="currency == 'dollar'">$</span>
-              </v-chip>
-            </td>
-            <td class="wrapOnPrint wrap">{{ cut.notice }}</td>
-            <td class="hideOnPrint">
-              <v-btn v-if="!auth.includes('edit')" variant="plain" color="info"
-                @click="editPaymentCutForm = cut; editPaymentCutDialog = true;" icon>
-                <v-icon>mdi-pencil</v-icon>
-              </v-btn>
-              <v-btn v-if="!auth.includes('delete')" variant="plain" color="error"
-                @click="deletePaymentCut(cut.idPaymentCut)" icon>
-                <v-icon>mdi-delete-outline</v-icon>
-              </v-btn>
-              <v-btn v-if="!auth.includes('delete')" variant="plain" color="warning"
-                @click="selectedPaymentCutId = cut.idPaymentCut; selectedPaymentId = payment.idPayment; cameraDialog = true"
-                icon>
-                <v-icon>mdi-camera</v-icon>
-              </v-btn>
-              <v-btn @click="
-                selectedPaymentCutId = cut.idPaymentCut;
-              selectedPaymentId = payment.idPayment;
-              chooseImage();
-              " v-if="!auth.includes('add')" variant="text" color="success">اضافة
-                صورة وصل</v-btn>
-              <input type="file" name="file" id="file" style="display: none;" @change="uploadImage($event)"
-                accept="image/*" />
-
-              <img v-for="image in paymentCutImages.filter(
-                (e) => e.paymentCutId == cut.idPaymentCut
-              )" :key="image.idPaymentCutImage" :src="axios.defaults.baseURL + image.imagePath" class="paymentCutImage"
-                @click="
-                  selectedPaymentCutImageId = image.idPaymentCutImage;
-                zoomedImage = axios.defaults.baseURL + image.imagePath;
-                imageModal = true;
-                " alt="" />
-            </td>
-          </tr>
-        </tbody>
-        <tfoot>
-          <tr>
-            <td colspan="6" class="footer-space">
-              <v-divider class="mb-4"></v-divider>
-              <div class="px-4 pb-5 showOnlyOnLastPage">
-                <v-chip color="error">
-                  <span>مجموع الصرفيات :
+              </h3>
+            </div>
+          </div>
+          <v-table class="px-0 rounded-0" theme="light" hover>
+            <thead class="bg-grey-lighten-2">
+              <tr>
+                <th style="padding: 0px" colspan="6" class="header-space printOnlyTd">
+                  <img src="printHeader.png" style="width: 100%" />
+                </th>
+              </tr>
+              <tr class="hideOnPrint" style="background-color: #ffffff">
+                <th style="padding: 0px" colspan="6" class="header-space">
+                  <v-table hover theme="light" class="headerTable">
+                    <thead>
+                      <tr>
+                        <th width="120px">رقم السلفة</th>
+                        <th width="120px">مبلغ السلفة</th>
+                        <th width="150px">تاريخ الاستلام</th>
+                        <th>النسبة</th>
+                        <th>اجور الشركة</th>
+                        <th>السلفة بعد الاستقطاع</th>
+                        <th width="400px">التفاصيل</th>
+                        <th class="hideOnPrint">الاجراءات</th>
+                      </tr>
+                    </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <b class="text-info">{{ payment.paymentCount }}</b>
+                </td>
+                <td>
+                  <v-chip color="success">
                     <b>
-                      {{ payment.totalCut.toLocaleString() }}
+                      {{ payment.paymentAmount.toLocaleString() }}
                       <span v-if="currency == 'dinar'">د.ع</span>
                       <span v-if="currency == 'dollar'">$</span>
                     </b>
-                  </span>
+                  </v-chip>
+                </td>
+                <td>{{ parseDate(payment.createdAt) }}</td>
+                <td>{{ location.percentage }} %</td>
+                <td class="text-warning font-weight-bold">
+                  {{
+                    calculatePercentage(
+                      payment.paymentAmount,
+                      payment
+                    ).toLocaleString()
+                  }}
+                  <span v-if="currency == 'dinar'">د.ع</span>
+                  <span v-if="currency == 'dollar'">$</span>
+                </td>
+                <td class="text-success font-weight-bold">
+                  {{
+                    (
+                      payment.paymentAmount -
+                      calculatePercentage(payment.paymentAmount, payment)
+                    ).toLocaleString()
+                  }}
+                  <span v-if="currency == 'dinar'">د.ع</span>
+                  <span v-if="currency == 'dollar'">$</span>
+                </td>
+                <td class="wrapOnPrint" style="font-size:15px">{{ payment.notice }}</td>
+                <td class="hideOnPrint">
+                  <v-btn v-if="!auth.includes('edit')" variant="plain" color="info"
+                    @click="editPaymentForm = payment; editPaymentDialog = true;" icon>
+                    <v-icon>mdi-pencil</v-icon>
+                  </v-btn>
+                  <v-chip color="info" v-if="payment.paymentAmount +
+                    payment.totalAdds -
+                    calculatePercentage(payment.paymentAmount) -
+                    payment.addsPercentage -
+                    payment.totalCut ==
+                    0
+                    ">
+                    <v-icon icon="mdi-check" start></v-icon>
+                    <span>تم صرف السلفة</span>
+                  </v-chip>
+                  &nbsp;
+                  <v-btn v-print="'#' + 'payment_' + payment.idPayment" variant="outlined" color="info">
+                    <v-icon start icon="mdi-printer"></v-icon>
+                    <span>طباعة</span>
+                  </v-btn>
+                  &nbsp;
+                  <v-btn variant="outlined" color="red" @click="deletePayment(payment.idPayment)"
+                    v-if="!auth.includes('delete')">
+                    <v-icon start icon="mdi-delete-outline"></v-icon>
+                    <span>حذف السلفة</span>
+                  </v-btn>
+                </td>
+              </tr>
+            </tbody>
+          </v-table>
+          <!-- <br class="showOnPrint" /> -->
+          </th>
+          </tr>
+          <tr v-if="payment.cuts.length > 0">
+            <th width="120px">الحركة</th>
+            <th width="120px">المبلغ</th>
+            <th>تاريخ</th>
+            <th>اسم المستلم</th>
+            <th width="50%">الملاحظات</th>
+            <th class="hideOnPrint">الاجراءات</th>
+          </tr>
+          </thead>
+          <tbody v-if="payment.cuts.length > 0">
+            <tr v-for="cut in reveiverSearch == null
+              ? payment.cuts
+              : payment.cuts.filter((e) => e.receiver == reveiverSearch)" :key="cut.idPaymentCut">
+              <td>
+                <b v-if="cut.method == 'minus'" class="text-red">صرف</b>
+                <b v-if="cut.method == 'plus'" class="text-success">اضافة</b>
+              </td>
+              <td>
+                <v-chip :color="cut.method == 'minus' ? 'error' : 'success'">
+                  <b>
+                    {{
+                      cut.price > 0
+                      ? cut.price.toLocaleString()
+                      : (cut.price * -1).toLocaleString()
+                    }}
+                    <span v-if="currency == 'dinar'">د.ع</span>
+                    <span v-if="currency == 'dollar'">$</span>
+                  </b>
                 </v-chip>
-                &nbsp;
+              </td>
+              <td>
+                {{ parseDate(cut.createdAt) }}
+              </td>
+              <td v-if="cut.method == 'minus'">{{ cut.receiver }}</td>
+              <td v-if="cut.method == 'plus'">
+                <v-chip color="success">اضافة نسبة الشركة
+                  {{ calculatePercentage(cut.price, payment).toLocaleString() }}
+                  &nbsp;
+                  <span v-if="currency == 'dinar'">د.ع</span>
+                  <span v-if="currency == 'dollar'">$</span>
+                </v-chip>
+              </td>
+              <td class="wrapOnPrint wrap" style="font-size:18px; font-weight:bold">{{ cut.notice }}</td>
+              <td class="hideOnPrint">
+                <v-btn v-if="!auth.includes('edit')" variant="plain" color="info"
+                  @click="editPaymentCutForm = cut; editPaymentCutDialog = true;" icon>
+                  <v-icon>mdi-pencil</v-icon>
+                </v-btn>
+                <v-btn v-if="!auth.includes('delete')" variant="plain" color="error"
+                  @click="deletePaymentCut(cut.idPaymentCut)" icon>
+                  <v-icon>mdi-delete-outline</v-icon>
+                </v-btn>
+                <v-btn v-if="!auth.includes('delete')" variant="plain" color="warning"
+                  @click="selectedPaymentCutId = cut.idPaymentCut; selectedPaymentId = payment.idPayment; cameraDialog = true"
+                  icon>
+                  <v-icon>mdi-camera</v-icon>
+                </v-btn>
+                <v-btn @click="
+                  selectedPaymentCutId = cut.idPaymentCut;
+                selectedPaymentId = payment.idPayment;
+                chooseImage();
+                " v-if="!auth.includes('add')" variant="text" color="success">اضافة
+                  صورة وصل</v-btn>
+                <input type="file" name="file" id="file" style="display: none;" @change="uploadImage($event)"
+                  accept="image/*" />
 
-                <!-- <v-chip color="success">
+                <img v-for="image in paymentCutImages.filter(
+                  (e) => e.paymentCutId == cut.idPaymentCut
+                )" :key="image.idPaymentCutImage" :src="axios.defaults.baseURL + image.imagePath"
+                  class="paymentCutImage" @click="
+                    selectedPaymentCutImageId = image.idPaymentCutImage;
+                  zoomedImage = axios.defaults.baseURL + image.imagePath;
+                  imageModal = true;
+                  " alt="" />
+              </td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="6" class="footer-space">
+                <v-divider class="mb-4"></v-divider>
+                <div class="px-4 pb-5 showOnlyOnLastPage">
+                  <v-chip color="error">
+                    <span>مجموع الصرفيات :
+                      <b>
+                        {{ payment.totalCut.toLocaleString() }}
+                        <span v-if="currency == 'dinar'">د.ع</span>
+                        <span v-if="currency == 'dollar'">$</span>
+                      </b>
+                    </span>
+                  </v-chip>
+                  &nbsp;
+
+                  <!-- <v-chip color="success">
                     <span
                       >مجموع نسبة الشركة :
                       <b>
@@ -263,58 +267,59 @@
                     </span>
                   </v-chip>
                   &nbsp; -->
-                <v-chip color="warning">
-                  <span>المبلغ المتبقي من السلفة :
-                    <b>
-                      {{
-                        (
-                          payment.paymentAmount +
-                          payment.totalAdds -
-                          calculatePercentage(payment.paymentAmount) -
-                          payment.addsPercentage -
-                          payment.totalCut
-                        ).toLocaleString()
-                      }}
-                      <span v-if="currency == 'dinar'">د.ع</span>
-                      <span v-if="currency == 'dollar'">$</span>
-                    </b>
-                  </span>
-                </v-chip>
-                <template v-if="!auth.includes('add')">
-                  <v-btn style="float: left;" @click="
-                    newPaymentCutForm.paymentId = payment.idPayment;
-                  addNewPaymentCutDialog = true;
-                  " v-if="payment.paymentAmount +
+                  <v-chip color="warning">
+                    <span>المبلغ المتبقي من السلفة :
+                      <b>
+                        {{
+                          (
+                            payment.paymentAmount +
+                            payment.totalAdds -
+                            calculatePercentage(payment.paymentAmount) -
+                            payment.addsPercentage -
+                            payment.totalCut
+                          ).toLocaleString()
+                        }}
+                        <span v-if="currency == 'dinar'">د.ع</span>
+                        <span v-if="currency == 'dollar'">$</span>
+                      </b>
+                    </span>
+                  </v-chip>
+                  <template v-if="!auth.includes('add')">
+                    <v-btn style="float: left;" @click="
+                      newPaymentCutForm.paymentId = payment.idPayment;
+                    addNewPaymentCutDialog = true;
+                    " v-if="payment.paymentAmount +
   payment.totalAdds -
   calculatePercentage(payment.paymentAmount) -
   payment.addsPercentage -
   payment.totalCut >
   0
   " color="warning" variant="outlined">
-                    <v-icon start icon="mdi-plus-circle-outline"></v-icon>
-                    <span>اضافة حركة</span>
-                  </v-btn>
-                </template>
-              </div>
+                      <v-icon start icon="mdi-plus-circle-outline"></v-icon>
+                      <span>اضافة حركة</span>
+                    </v-btn>
+                  </template>
+                </div>
 
-            </td>
-            <td class="hideOnPrint"></td>
-          </tr>
-          <tr>
-            <td style="padding: 0px" colspan="6" class="header-space printOnlyTd">
-              <img src="printFooter.png" style="width: 100%; visibility: hidden" />
-              <img src="printFooter.png" style="width: 100%; position: fixed; bottom: 0; left: 0" />
-            </td>
-          </tr>
-        </tfoot>
-        </v-table>
-        <div v-for="image in paymentCutImages.filter(
-          (e) => e.paymentId == payment.idPayment
-        )" :key="image.idPaymentCutImage" class="pagePrint showOnPrint" style="padding: 30px">
-          <img :src="axios.defaults.baseURL + image.imagePath" style="height: 25cm; " alt="" />
-        </div>
-      </v-card>
-      <v-divider class="my-10"></v-divider>
+              </td>
+              <td class="hideOnPrint"></td>
+            </tr>
+            <tr>
+              <td style="padding: 0px" colspan="6" class="header-space printOnlyTd">
+                <img src="printFooter.png" style="width: 100%; visibility: hidden" />
+                <img src="printFooter.png" style="width: 100%; position: fixed; bottom: 0; left: 0" />
+              </td>
+            </tr>
+          </tfoot>
+          </v-table>
+          <div v-for="image in paymentCutImages.filter(
+            (e) => e.paymentId == payment.idPayment
+          )" :key="image.idPaymentCutImage" class="pagePrint showOnPrint" style="padding: 30px">
+            <img :src="axios.defaults.baseURL + image.imagePath" style="height: 25cm; " alt="" />
+          </div>
+        </v-card>
+        <v-divider class="my-10"></v-divider>
+      </div>
     </div>
     <v-footer color="#01226F" class="pa-3" elevation="5" :app="!$vuetify.display.mobile">
       <v-row>
@@ -1047,6 +1052,7 @@ th {
 @media print {
   .pagePrint {
     page-break-after: initial;
+    page-break-inside: avoid;
   }
 
   .pagePrint h1 {

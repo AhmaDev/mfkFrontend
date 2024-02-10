@@ -103,11 +103,11 @@ export default {
         route: "/absences",
         icon: "mdi-card-account-details-outline",
       },
-      {
-        title: "الديون",
-        route: "/loans",
-        icon: "mdi-credit-card-marker-outline",
-      },
+      // {
+      //   title: "الديون",
+      //   route: "/loans",
+      //   icon: "mdi-credit-card-marker-outline",
+      // },
       {
         title: "الاعدادات",
         route: "/settings",

@@ -47,6 +47,108 @@
     </v-card>
     <br />
     <v-row class="mb-10">
+      <v-col cols="12" md="12">
+        <v-card class="pa-10">
+          <v-row>
+            <v-col cols="auto">
+              <h2>الديون</h2>
+            </v-col>
+            <v-col>
+              <v-btn @click="loanModal = true" color="primary" variant="tonal">
+                <v-icon icon="mdi-plus-circle"></v-icon>
+                <span>اضافة دين جديد</span>
+              </v-btn>
+            </v-col>
+          </v-row>
+          <v-divider class="my-4"></v-divider>
+          <center v-if="loans.filter(e => e.loanType == 'loan').length == 0">
+            <v-alert width="300" color="success" variant="tonal">
+              <span>لا يوجد ديون</span>
+            </v-alert>
+          </center>
+          <v-table v-if="loans.filter(e => e.loanType == 'loan').length > 0" hover theme="light" density="compact">
+            <thead>
+              <tr>
+                <th>الموقع</th>
+                <th>التاريخ</th>
+                <th>المبلغ</th>
+                <th>التسديد</th>
+                <th>المتبقي</th>
+                <th>الملاحظات</th>
+                <th>الاجراءات</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="loan in loans.filter(e => e.loanType == 'loan')" :key="loan.idLoan">
+                <td>{{ locations.filter(e => e.idLocation == loan.locationId)[0].locationTitle }}</td>
+                <td>{{ parseDate(loan.createdAt) }}</td>
+                <td>
+                  <v-chip variant="tonal" color="success">
+                    {{ loan.amount.toLocaleString() }} د.ع
+                  </v-chip>
+                </td>
+                <td>
+                  <v-chip variant="tonal" color="warning">
+                    {{ loans.filter(e => e.loanType == 'pay' && e.notice == loan.idLoan).reduce((a, b) => a +
+                      b.amount, 0).toLocaleString() }} د.ع
+                  </v-chip>
+                </td>
+                <td>
+                  <v-chip variant="tonal" color="error">
+                    {{ (loan.amount - loans.filter(e => e.loanType == 'pay' && e.notice == loan.idLoan).reduce((a, b) => a
+                      +
+                      b.amount, 0)).toLocaleString() }} د.ع
+                  </v-chip>
+                </td>
+                <td>{{ loan.notice }}</td>
+                <td>
+                  <v-btn v-if="!auth.includes('delete')" @click="deleteLoan(loan.idLoan)" size="small" variant="text"
+                    color="error" icon="mdi-delete-outline"></v-btn>
+                  <v-btn v-if="(loan.amount - loans.filter(e => e.loanType == 'pay' && e.notice == loan.idLoan).reduce((a, b) => a
+                    +
+                    b.amount, 0)) > 0" @click="selectLoanToPay(loan)" size="small" color="primary" variant="tonal">
+                    <span>تسديد </span>
+                  </v-btn>
+                </td>
+              </tr>
+            </tbody>
+          </v-table>
+          <v-divider class="my-2"></v-divider>
+          <h2>التسديدات</h2>
+          <center v-if="loans.filter(e => e.loanType == 'pay').length == 0">
+            <v-alert width="300" color="error" variant="tonal">
+              <span>لا يوجد تسديدات</span>
+            </v-alert>
+          </center>
+          <v-table v-if="loans.filter(e => e.loanType == 'pay').length > 0" hover theme="light" density="compact">
+            <thead>
+              <tr>
+                <th>الموقع</th>
+                <th>التاريخ</th>
+                <th>المبلغ</th>
+                <th>الملاحظات</th>
+                <th>الاجراءات</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="loan in loans.filter(e => e.loanType == 'pay')" :key="loan.idLoan">
+                <td>{{ locations.filter(e => e.idLocation == loan.locationId)[0].locationTitle }}</td>
+                <td>{{ parseDate(loan.createdAt) }}</td>
+                <td>
+                  <v-chip variant="tonal" color="success">
+                    {{ loan.amount.toLocaleString() }} د.ع
+                  </v-chip>
+                </td>
+                <td>{{ loanPayNotice(loan.notice) }}</td>
+                <td>
+                  <v-btn v-if="!auth.includes('delete')" @click="deleteLoan(loan.idLoan)" size="small" variant="text"
+                    color="error" icon="mdi-delete-outline"></v-btn>
+                </td>
+              </tr>
+            </tbody>
+          </v-table>
+        </v-card>
+      </v-col>
       <v-col v-if="paymentsReport.length > 0" cols="12" md="12">
         <h2 class="mb-4">
           <span>واردات السلف</span>
@@ -264,6 +366,55 @@
             <span class="mr-1" v-if="tab == 'dollar'">$</span>
           </v-chip>
         </v-col>
+        <v-col cols="auto">
+          <span>مجموع الديون</span>
+          <v-chip class="mr-3" color="primary">
+            <b>
+              {{
+                (
+                  loans.filter(e => e.loanType == 'loan').reduce((a, b) => a + b.amount, 0)
+                ).toLocaleString()
+              }}
+            </b>
+            <span class="mr-1" v-if="tab == 'dinar'">د.ع</span>
+            <span class="mr-1" v-if="tab == 'dollar'">$</span>
+          </v-chip>
+        </v-col>
+        <v-col cols="auto">
+          <span>مجموع التسديدات</span>
+          <v-chip class="mr-3" color="black">
+            <b>
+              {{
+                (
+                  loans.filter(e => e.loanType == 'pay').reduce((a, b) => a + b.amount, 0)
+                ).toLocaleString()
+              }}
+            </b>
+            <span class="mr-1" v-if="tab == 'dinar'">د.ع</span>
+            <span class="mr-1" v-if="tab == 'dollar'">$</span>
+          </v-chip>
+        </v-col>
+        <v-col cols="auto">
+          <span>صافي الصندوق</span>
+          <v-chip class="mr-3" color="orange">
+            <b>
+              {{
+                (
+                  incomes.reduce((a, b) => a + b.price, 0) +
+                  totalPaymentsPercentage() -
+                  outcomes.reduce((a, b) => a + b.price, 0)
+                  +
+                  loans.filter(e => e.loanType == 'pay').reduce((a, b) => a + b.amount, 0)
+                  -
+                  loans.filter(e => e.loanType == 'loan').reduce((a, b) => a + b.amount, 0)
+                ).toLocaleString()
+
+              }}
+            </b>
+            <span class="mr-1" v-if="tab == 'dinar'">د.ع</span>
+            <span class="mr-1" v-if="tab == 'dollar'">$</span>
+          </v-chip>
+        </v-col>
       </v-row>
     </v-footer>
     <v-dialog v-model="incomeModal" max-width="500">
@@ -404,6 +555,31 @@
       </v-card>
     </v-dialog>
 
+    <v-dialog v-model="loanModal" max-width="500">
+      <v-card class="pa-10">
+        <h3>اضافة دين جديد</h3>
+        <br>
+        <v-autocomplete variant="outlined" :items="locations" item-title="locationTitle" item-value="idLocation"
+          label="الموقع" @update:menu="fixMenu" v-model="newLoan.locationId"></v-autocomplete>
+        <v-text-field variant="outlined" label="مبلغ الدين بالدينار العراقي" type="number"
+          v-model="newLoan.amount"></v-text-field>
+        <br>
+        <v-textarea variant="outlined" label="الملاحظات" v-model="newLoan.notice"></v-textarea>
+        <br>
+        <v-btn @click="addLoan()" block color="primary" dark>اضافة الدين</v-btn>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="loanModalPay" max-width="500">
+      <v-card class="pa-10">
+        <h3>اضافة تسديد جديد</h3>
+        <br>
+        <v-text-field variant="outlined" label="مبلغ التسديد بالدينار العراقي" type="number"
+          v-model="newLoanPay.amount"></v-text-field>
+        <br>
+        <v-btn @click="addLoanPay()" block color="primary" dark>اضافة تسديد</v-btn>
+      </v-card>
+    </v-dialog>
+
   </div>
 </template>
 
@@ -415,6 +591,7 @@ export default {
     userId: 0,
     auth: [],
     location: null,
+    locations: [],
     tab: "dinar",
     dateRange: [],
     isLoading: false,
@@ -424,6 +601,8 @@ export default {
     incomeModal: false,
     outcomeModal: false,
     employees: [],
+    loans: [],
+    selectedLoan: null,
     incomeForm: {
       price: null,
       createdBy: null,
@@ -435,6 +614,23 @@ export default {
     editOutcomeForm: null,
     editIncomeDialog: false,
     editOutcomeDialog: false,
+    loanModal: false,
+    newLoan: {
+      locationId: null,
+      fromId: 0,
+      amount: null,
+      currency: 'dinar',
+      notice: '',
+    },
+    loanModalPay: false,
+    newLoanPay: {
+      locationId: null,
+      fromId: 0,
+      amount: null,
+      currency: 'dinar',
+      notice: '',
+      loanType: 'pay',
+    },
     outcomeForm: {
       price: null,
       createdBy: null,
@@ -531,6 +727,16 @@ export default {
       this.outcomeForm.createdBy = JSON.parse(
         localStorage.getItem("userInfo")
       ).idUser;
+      this.axios
+        .get("locations")
+        .then((res) => {
+          this.locations = res.data;
+        })
+      this.axios
+        .get("loans")
+        .then((res) => {
+          this.loans = res.data;
+        })
       this.search();
     },
     search() {
@@ -648,6 +854,15 @@ export default {
           .finally(() => (this.$store.state.loading = false));
       });
     },
+    loanPayNotice(id) {
+      var loan = this.loans.filter((l) => l.idLoan == id);
+      var location = this.locations.filter(e => e.idLocation == loan[0].locationId);
+      if (loan.length == 0 || location.length == 0) {
+        return "تم حذف قيد الدين";
+      } else {
+        return `تسديد للموقع : ${location[0].locationTitle} --- تاريخ قيد الدين : ${this.parseDate(loan[0].createdAt)}`;
+      }
+    },
     giveSallaries() {
       this.$store.state.loading = true;
       let yearx = Date.now();
@@ -684,7 +899,51 @@ export default {
           })
           .finally(() => (this.$store.state.loading = false));
       }
-    }
+    },
+    selectLoanToPay(loan) {
+      console.log(JSON.parse(JSON.stringify(loan)));
+      this.selectedLoan = JSON.parse(JSON.stringify(loan));
+      this.newLoanPay.notice = JSON.parse(JSON.stringify(loan)).idLoan;
+      this.newLoanPay.locationId = JSON.parse(JSON.stringify(loan)).locationId;
+      this.loanModalPay = true;
+    },
+    addLoan() {
+      this.$store.state.loading = true;
+      this.axios.post('addLoan', this.newLoan).then(() => {
+        this.$toast.success('تم اضافة الدين');
+        this.loanModal = false;
+        this.newLoan = {
+          locationId: null,
+          fromId: null,
+          amount: null,
+          currency: 'dinar',
+          notice: '',
+        };
+        this.fetch();
+      }).finally(() => this.$store.state.loading = false)
+    },
+    addLoanPay() {
+      this.$store.state.loading = true;
+      this.axios.post('addLoan', this.newLoanPay).then(() => {
+        this.$toast.success('تم اضافة التسديد');
+        this.loanModalPay = false;
+        this.selectLoanToPay = null;
+        this.newLoanPay = {
+          locationId: null,
+          fromId: null,
+          amount: null,
+          currency: 'dinar',
+          notice: '',
+        };
+        this.fetch();
+      }).finally(() => this.$store.state.loading = false)
+    },
+    deleteLoan(id) {
+      let c = confirm("هل انت متأكد");
+      if (c) {
+        this.axios.delete("loan/" + id).then(() => this.fetch());
+      }
+    },
   },
 };
 </script>
